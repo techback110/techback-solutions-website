@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { loginOptions } from "@/lib/auth";
 import { dataSource } from "@/lib/data";
+import { hasSessionSecret } from "@/lib/session";
 import { site } from "@/lib/site";
 import { LoginForm } from "./LoginForm";
 
@@ -27,7 +28,12 @@ export default async function LoginPage({ searchParams }: PageProps<"/admin/logi
         <div className="rounded-2xl border border-line bg-ink-2/80 p-8 backdrop-blur">
           <h1 className="display text-4xl">Welcome back.</h1>
           <p className="mb-8 mt-2 text-sm text-mute">Sign in to manage your website.</p>
-          {login.enabled ? (
+          {!hasSessionSecret() ? (
+            <p className="rounded-lg border border-ember/30 bg-ember/10 p-4 text-sm text-ember">
+              Admin login is disabled: <code>AUTH_SECRET</code> is not set for this deployment. Add a long random value
+              in your hosting settings and redeploy.
+            </p>
+          ) : login.enabled ? (
             <LoginForm next={typeof next === "string" ? next : "/admin"} />
           ) : (
             <p className="rounded-lg border border-ember/30 bg-ember/10 p-4 text-sm text-ember">

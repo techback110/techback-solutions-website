@@ -5,8 +5,13 @@ export const SESSION_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
 
 const DEV_SECRET = "dev-only-secret-change-me-dev-only-secret-change-me";
 
+/** Sessions can be signed: a secret is set, or we're in development. */
+export function hasSessionSecret() {
+  return Boolean(process.env.AUTH_SECRET?.trim()) || process.env.NODE_ENV !== "production";
+}
+
 function secretKey() {
-  const secret = process.env.AUTH_SECRET;
+  const secret = process.env.AUTH_SECRET?.trim();
   if (!secret && process.env.NODE_ENV === "production") {
     throw new Error("AUTH_SECRET must be set in production");
   }

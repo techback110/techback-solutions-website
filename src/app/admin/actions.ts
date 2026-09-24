@@ -7,7 +7,7 @@ import { z } from "zod";
 import { authenticate, requireAdmin } from "@/lib/auth";
 import * as db from "@/lib/data";
 import { hashPassword, verifyPassword } from "@/lib/password";
-import { SESSION_COOKIE, SESSION_MAX_AGE, signSession } from "@/lib/session";
+import { hasSessionSecret, SESSION_COOKIE, SESSION_MAX_AGE, signSession } from "@/lib/session";
 import type { ActionState, Metric, SiteSettings } from "@/lib/types";
 import { lines, slugify } from "@/lib/utils";
 
@@ -20,6 +20,7 @@ export async function login(_: ActionState, formData: FormData): Promise<ActionS
   const password = String(formData.get("password") ?? "");
   const next = String(formData.get("next") ?? "/admin");
 
+  if (!hasSessionSecret()) return { error: "AUTH_SECRET is not set for this deployment." };
   const signedIn = await authenticate(email, password);
   if (!signedIn) {
     await new Promise((r) => setTimeout(r, 600)); // slow down guessing
