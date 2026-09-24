@@ -5,10 +5,11 @@
  */
 import { readFileSync } from "node:fs";
 import postgres from "postgres";
+import { normalizeDatabaseUrl } from "../src/lib/db-url.ts";
 import { hashPassword } from "../src/lib/password.ts";
 import { seedProjects, seedReviews, seedServices, seedSettings, seedTeam } from "../src/lib/seed.ts";
 
-const url = process.env.DATABASE_URL;
+const url = normalizeDatabaseUrl(process.env.DATABASE_URL);
 if (!url || url.includes("[YOUR-PASSWORD]")) {
   console.error("✖ Set a real DATABASE_URL in .env.local first (replace [YOUR-PASSWORD]).");
   process.exit(1);
