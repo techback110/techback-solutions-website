@@ -1,6 +1,19 @@
 "use client";
 
-import { Briefcase, ExternalLink, Inbox, Layers, LayoutDashboard, LogOut, Menu, MessageSquareQuote, X } from "lucide-react";
+import {
+  Briefcase,
+  ExternalLink,
+  Inbox,
+  Layers,
+  LayoutDashboard,
+  LogOut,
+  Menu,
+  MessageSquareQuote,
+  Settings,
+  UserCog,
+  Users,
+  X,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -15,6 +28,9 @@ const NAV = [
   { href: "/admin/services", label: "Services", icon: Layers },
   { href: "/admin/reviews", label: "Reviews", icon: MessageSquareQuote },
   { href: "/admin/inquiries", label: "Inquiries", icon: Inbox },
+  { href: "/admin/team", label: "Team", icon: Users },
+  { href: "/admin/settings", label: "Settings", icon: Settings },
+  { href: "/admin/users", label: "Users", icon: UserCog },
 ];
 
 export function Sidebar({ email, unread, pending }: { email: string; unread: number; pending: number }) {

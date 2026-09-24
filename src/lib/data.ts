@@ -1,13 +1,16 @@
 import type postgres from "postgres";
+import { cache } from "react";
 import { sql } from "./db";
-import { seedProjects, seedReviews, seedServices } from "./seed";
-import type { Inquiry, Project, Review, Service } from "./types";
+import { seedProjects, seedReviews, seedServices, seedSettings, seedTeam } from "./seed";
+import type { AdminUser, Inquiry, Project, Review, Service, SiteSettings, TeamMember } from "./types";
 
 type Tables = {
   services: Service;
   projects: Project;
   reviews: Review;
   inquiries: Inquiry;
+  team_members: TeamMember;
+  admin_users: AdminUser;
 };
 type Table = keyof Tables;
 type Input<K extends Table> = Omit<Tables[K], "id" | "created_at">;
@@ -17,7 +20,7 @@ type Input<K extends Table> = Omit<Tables[K], "id" | "created_at">;
 /* ------------------------------------------------------------------ */
 
 type Memory = { [K in Table]: Tables[K][] };
-const g = globalThis as unknown as { __mem?: Memory; __dbError?: string };
+const g = globalThis as unknown as { __mem?: Memory; __settings?: SiteSettings; __dbError?: string };
 
 function stamp<T>(rows: T[]) {
   return rows.map((row, i) => ({
@@ -33,6 +36,8 @@ function memory(): Memory {
     projects: stamp(seedProjects),
     reviews: stamp(seedReviews),
     inquiries: [],
+    team_members: stamp(seedTeam),
+    admin_users: [],
   };
   return g.__mem;
 }
@@ -178,3 +183,64 @@ export async function getInquiries() {
 export const createInquiry = (data: Input<"inquiries">) => insert("inquiries", data);
 export const setInquiryRead = (id: string, read: boolean) => update("inquiries", id, { read });
 export const deleteInquiry = (id: string) => remove("inquiries", id);
+
+/* ------------------------------------------------------------------ */
+/* Team                                                               */
+/* ------------------------------------------------------------------ */
+
+export async function getTeam({ includeDrafts = false } = {}) {
+  const rows = await all("team_members");
+  return rows.filter((m) => includeDrafts || m.published).sort(byOrder);
+}
+export async function getTeamMemberById(id: string) {
+  return (await all("team_members")).find((m) => m.id === id) ?? null;
+}
+export const createTeamMember = (data: Input<"team_members">) => insert("team_members", data);
+export const updateTeamMember = (id: string, data: Partial<Input<"team_members">>) =>
+  update("team_members", id, data);
+export const deleteTeamMember = (id: string) => remove("team_members", id);
+
+/* ------------------------------------------------------------------ */
+/* Admin users                                                        */
+/* ------------------------------------------------------------------ */
+
+export async function getAdminUsers() {
+  return (await all("admin_users")).sort((a, b) => a.created_at.localeCompare(b.created_at));
+}
+export async function getAdminUserByEmail(email: string) {
+  const needle = email.trim().toLowerCase();
+  return (await all("admin_users")).find((u) => u.email.toLowerCase() === needle) ?? null;
+}
+export const createAdminUser = (data: Input<"admin_users">) =>
+  insert("admin_users", { ...data, email: data.email.trim().toLowerCase() });
+export const updateAdminUser = (id: string, data: Partial<Input<"admin_users">>) =>
+  update("admin_users", id, data);
+export const deleteAdminUser = (id: string) => remove("admin_users", id);
+
+/* ------------------------------------------------------------------ */
+/* Site settings (one jsonb row, merged over the defaults)            */
+/* ------------------------------------------------------------------ */
+
+export const getSettings = cache(async (): Promise<SiteSettings> => {
+  if (!sql) return { ...seedSettings, ...g.__settings };
+  try {
+    const [row] = await sql`select value from settings where key = 'site'`;
+    return { ...seedSettings, ...(row?.value as Partial<SiteSettings> | undefined) };
+  } catch (err) {
+    g.__dbError = err instanceof Error ? err.message : String(err);
+    console.error("[db] failed to read settings:", g.__dbError);
+    return seedSettings;
+  }
+});
+
+export async function saveSettings(value: SiteSettings) {
+  if (!sql) {
+    g.__settings = value;
+    return;
+  }
+  await sql`
+    insert into settings (key, value, updated_at)
+    values ('site', ${sql.json(value as unknown as postgres.JSONValue)}, now())
+    on conflict (key) do update set value = excluded.value, updated_at = now()
+  `;
+}

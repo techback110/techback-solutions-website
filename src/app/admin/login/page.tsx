@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { adminCredentials } from "@/lib/auth";
+import { loginOptions } from "@/lib/auth";
 import { site } from "@/lib/site";
 import { LoginForm } from "./LoginForm";
 
@@ -8,7 +8,7 @@ export const metadata: Metadata = { title: "Admin sign in", robots: { index: fal
 
 export default async function LoginPage({ searchParams }: PageProps<"/admin/login">) {
   const { next } = await searchParams;
-  const creds = adminCredentials();
+  const login = await loginOptions();
 
   return (
     <main className="relative grid min-h-svh place-items-center overflow-hidden px-4">
@@ -24,18 +24,19 @@ export default async function LoginPage({ searchParams }: PageProps<"/admin/logi
         </Link>
         <div className="rounded-2xl border border-line bg-ink-2/80 p-8 backdrop-blur">
           <h1 className="display text-4xl">Welcome back.</h1>
-          <p className="mb-8 mt-2 text-sm text-mute">Sign in to manage projects, services and reviews.</p>
-          {creds ? (
+          <p className="mb-8 mt-2 text-sm text-mute">Sign in to manage your website.</p>
+          {login.enabled ? (
             <LoginForm next={typeof next === "string" ? next : "/admin"} />
           ) : (
             <p className="rounded-lg border border-ember/30 bg-ember/10 p-4 text-sm text-ember">
-              Admin login is disabled. Set <code>ADMIN_EMAIL</code>, <code>ADMIN_PASSWORD</code> and <code>AUTH_SECRET</code> environment variables.
+              Admin login is disabled. Run <code>npm run db:setup</code> to create the first account, or set{" "}
+              <code>ADMIN_EMAIL</code> and <code>ADMIN_PASSWORD</code> environment variables.
             </p>
           )}
-          {creds?.isDefault && (
+          {login.devDefault && (
             <p className="mt-6 rounded-lg bg-ink-3 p-3 text-xs leading-relaxed text-mute">
-              Dev mode — default login: <span className="text-bone">{creds.email}</span> /{" "}
-              <span className="text-bone">{creds.password}</span>. Set ADMIN_EMAIL and ADMIN_PASSWORD in .env.local to change.
+              Dev mode — default login: <span className="text-bone">{login.devDefault.email}</span> /{" "}
+              <span className="text-bone">{login.devDefault.password}</span>. Add a real account under Users.
             </p>
           )}
         </div>

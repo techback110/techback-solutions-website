@@ -1,19 +1,21 @@
 import Link from "next/link";
+import { getSettings } from "@/lib/data";
 import { site } from "@/lib/site";
 import { LocalTime } from "./LocalTime";
 import { Reveal } from "./motion";
 
-export function Footer() {
+export async function Footer() {
+  const settings = await getSettings();
   return (
     <footer className="relative overflow-hidden border-t border-line bg-ink pt-20">
       <div className="container-x">
         <div className="grid gap-12 pb-20 md:grid-cols-12">
           <Reveal className="md:col-span-5">
             <p className="eyebrow mb-5 text-mute">New business</p>
-            <a href={`mailto:${site.email}`} className="display link-underline text-4xl sm:text-5xl">
-              {site.email}
+            <a href={`mailto:${settings.email}`} className="display link-underline text-4xl sm:text-5xl">
+              {settings.email}
             </a>
-            <p className="mt-6 max-w-sm text-bone/60">{site.description}</p>
+            {settings.description && <p className="mt-6 max-w-sm text-bone/60">{settings.description}</p>}
           </Reveal>
 
           <div className="grid grid-cols-2 gap-8 md:col-span-7 md:grid-cols-3">
@@ -29,22 +31,28 @@ export function Footer() {
                 ))}
               </ul>
             </div>
-            <div>
-              <p className="eyebrow mb-5 text-mute">Social</p>
-              <ul className="space-y-2.5">
-                {site.socials.map((s) => (
-                  <li key={s.label}>
-                    <a href={s.href} target="_blank" rel="noreferrer" className="link-underline text-bone/80 hover:text-bone">
-                      {s.label} ↗
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {settings.socials.length > 0 && (
+              <div>
+                <p className="eyebrow mb-5 text-mute">Social</p>
+                <ul className="space-y-2.5">
+                  {settings.socials.map((s) => (
+                    <li key={s.href}>
+                      <a href={s.href} target="_blank" rel="noreferrer" className="link-underline text-bone/80 hover:text-bone">
+                        {s.label} ↗
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
             <div className="col-span-2 md:col-span-1">
               <p className="eyebrow mb-5 text-mute">Studio</p>
-              <p className="text-bone/80">{site.location}</p>
-              <p className="mt-2 text-bone/80">{site.phone}</p>
+              {settings.address && <p className="mb-2 text-bone/80">{settings.address}</p>}
+              {settings.phone && (
+                <a href={`tel:${settings.phone.replace(/[^\d+]/g, "")}`} className="block text-bone/80 hover:text-bone">
+                  {settings.phone}
+                </a>
+              )}
               <LocalTime className="eyebrow mt-4 block text-ember" />
             </div>
           </div>

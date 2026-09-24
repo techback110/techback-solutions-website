@@ -64,3 +64,41 @@ export type ActionState = {
   fieldErrors?: Record<string, string[] | undefined>;
   message?: string;
 };
+
+export type TeamMember = {
+  id: string;
+  name: string;
+  role: string;
+  photo_url: string | null;
+  color: string;
+  sort_order: number;
+  published: boolean;
+  created_at: string;
+};
+
+export type AdminUser = {
+  id: string;
+  name: string;
+  email: string;
+  password_hash: string;
+  created_at: string;
+};
+
+export type Stat = { value: number; suffix: string; label: string };
+export type Social = { label: string; href: string };
+export type Principle = { title: string; body: string };
+
+/** Site-wide content editable from Admin → Settings. Empty strings are hidden on the site. */
+export type SiteSettings = {
+  email: string;
+  phone: string;
+  address: string;
+  description: string;
+  socials: Social[];
+  home_intro: string;
+  clients: string[];
+  stats: Stat[];
+  about_intro: string;
+  about_story: string;
+  principles: Principle[];
+};

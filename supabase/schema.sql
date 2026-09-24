@@ -72,3 +72,35 @@ alter table public.services  enable row level security;
 alter table public.projects  enable row level security;
 alter table public.reviews   enable row level security;
 alter table public.inquiries enable row level security;
+
+create table if not exists public.team_members (
+  id         uuid primary key default gen_random_uuid(),
+  name       text not null,
+  role       text not null default '',
+  photo_url  text,
+  color      text not null default '#FF4D1C',
+  sort_order integer not null default 0,
+  published  boolean not null default true,
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.admin_users (
+  id            uuid primary key default gen_random_uuid(),
+  name          text not null default '',
+  email         text not null unique,
+  password_hash text not null,
+  created_at    timestamptz not null default now()
+);
+
+-- Key/value store for site-wide content (contact details, about copy, …).
+create table if not exists public.settings (
+  key        text primary key,
+  value      jsonb not null,
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists team_sort_idx on public.team_members (sort_order);
+
+alter table public.team_members enable row level security;
+alter table public.admin_users  enable row level security;
+alter table public.settings     enable row level security;

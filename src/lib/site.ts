@@ -1,42 +1,17 @@
+/**
+ * Fixed branding and navigation. Contact details, socials, stats, clients and
+ * About copy are editable in Admin → Settings (see getSettings in ./data).
+ */
 export const site = {
   name: "Noyada Studio",
   shortName: "Noyada",
   tagline: "Independent design & engineering studio",
-  description:
-    "Noyada is an independent studio crafting brands, websites and digital products for companies that refuse to look like everyone else.",
-  email: "hello@noyada.studio",
-  phone: "+91 98765 43210",
-  location: "Ahmedabad, India — working worldwide",
   timezone: "Asia/Kolkata",
-  socials: [
-    { label: "Instagram", href: "https://instagram.com" },
-    { label: "LinkedIn", href: "https://linkedin.com" },
-    { label: "Dribbble", href: "https://dribbble.com" },
-    { label: "Behance", href: "https://behance.net" },
-  ],
   nav: [
     { label: "Work", href: "/work" },
     { label: "Services", href: "/services" },
     { label: "Studio", href: "/about" },
     { label: "Reviews", href: "/reviews" },
-  ],
-  stats: [
-    { value: 120, suffix: "+", label: "Projects shipped" },
-    { value: 9, suffix: "", label: "Years in practice" },
-    { value: 14, suffix: "", label: "Countries served" },
-    { value: 98, suffix: "%", label: "Clients who return" },
-  ],
-  clients: [
-    "Halden",
-    "Verso",
-    "Atlas Freight",
-    "Mira",
-    "Kinfolk",
-    "Pulse",
-    "Northwind",
-    "Oreo Labs",
-    "Sable & Co",
-    "Lumen",
   ],
   budgets: ["< $5k", "$5k – $15k", "$15k – $40k", "$40k +"],
 } as const;

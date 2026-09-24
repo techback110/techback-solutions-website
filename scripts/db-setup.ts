@@ -5,7 +5,8 @@
  */
 import { readFileSync } from "node:fs";
 import postgres from "postgres";
-import { seedProjects, seedReviews, seedServices } from "../src/lib/seed.ts";
+import { hashPassword } from "../src/lib/password.ts";
+import { seedProjects, seedReviews, seedServices, seedSettings, seedTeam } from "../src/lib/seed.ts";
 
 const url = process.env.DATABASE_URL;
 if (!url || url.includes("[YOUR-PASSWORD]")) {
@@ -33,6 +34,23 @@ async function seed(table: string, rows: Record<string, unknown>[]) {
   console.log(`✓ ${table}: seeded ${rows.length} rows`);
 }
 
+/** Creates the first admin account from ADMIN_EMAIL / ADMIN_PASSWORD if there are none yet. */
+async function seedAdmin() {
+  const [{ count }] = await sql`select count(*)::int as count from admin_users`;
+  if (count > 0) {
+    console.log(`• admin_users: ${count} account(s) present, skipping`);
+    return;
+  }
+  const email = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+  const password = process.env.ADMIN_PASSWORD;
+  if (!email || !password) {
+    console.log("• admin_users: set ADMIN_EMAIL and ADMIN_PASSWORD in .env.local to create the first account");
+    return;
+  }
+  await sql`insert into admin_users (email, name, password_hash) values (${email}, '', ${await hashPassword(password)})`;
+  console.log(`✓ admin_users: created ${email}`);
+}
+
 try {
   const schema = readFileSync(new URL("../supabase/schema.sql", import.meta.url), "utf8");
   await sql.unsafe(schema);
@@ -40,6 +58,13 @@ try {
   await seed("services", seedServices);
   await seed("projects", seedProjects);
   await seed("reviews", seedReviews);
+  await seed("team_members", seedTeam);
+  await sql`
+    insert into settings (key, value) values ('site', ${sql.json(seedSettings as unknown as postgres.JSONValue)})
+    on conflict (key) do nothing
+  `;
+  console.log("✓ settings: ready");
+  await seedAdmin();
   console.log("Done.");
 } catch (err) {
   console.error("✖ Setup failed:", err instanceof Error ? err.message : err);

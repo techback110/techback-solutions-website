@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { ContactForm } from "@/components/site/forms";
 import { LocalTime } from "@/components/site/LocalTime";
 import { Reveal, SplitText } from "@/components/site/motion";
-import { getServices } from "@/lib/data";
-import { site } from "@/lib/site";
+import { getServices, getSettings } from "@/lib/data";
 
 export const revalidate = 60;
 export const metadata: Metadata = {
@@ -12,7 +11,7 @@ export const metadata: Metadata = {
 };
 
 export default async function ContactPage() {
-  const services = await getServices();
+  const [services, settings] = await Promise.all([getServices(), getSettings()]);
   return (
     <section className="container-x grid gap-16 pb-32 pt-40 sm:pt-52 md:grid-cols-12">
       <div className="md:col-span-5">
@@ -31,17 +30,21 @@ export default async function ContactPage() {
           <div className="space-y-6 border-t border-line pt-8">
             <div>
               <p className="eyebrow text-mute">Email</p>
-              <a href={`mailto:${site.email}`} className="link-underline mt-1 inline-block text-xl">
-                {site.email}
+              <a href={`mailto:${settings.email}`} className="link-underline mt-1 inline-block text-xl">
+                {settings.email}
               </a>
             </div>
-            <div>
-              <p className="eyebrow text-mute">Phone</p>
-              <p className="mt-1 text-xl">{site.phone}</p>
-            </div>
+            {settings.phone && (
+              <div>
+                <p className="eyebrow text-mute">Phone</p>
+                <a href={`tel:${settings.phone.replace(/[^\d+]/g, "")}`} className="mt-1 inline-block text-xl">
+                  {settings.phone}
+                </a>
+              </div>
+            )}
             <div>
               <p className="eyebrow text-mute">Studio</p>
-              <p className="mt-1 text-xl">{site.location}</p>
+              {settings.address && <p className="mt-1 text-xl">{settings.address}</p>}
               <LocalTime className="eyebrow mt-2 block text-ember" />
             </div>
           </div>

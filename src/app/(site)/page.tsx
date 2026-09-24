@@ -9,8 +9,7 @@ import { ScrollText } from "@/components/site/ScrollText";
 import { SectionHeading } from "@/components/site/SectionHeading";
 import { ServiceAccordion } from "@/components/site/ServiceAccordion";
 import { Testimonials } from "@/components/site/Testimonials";
-import { getProjects, getReviews, getServices } from "@/lib/data";
-import { site } from "@/lib/site";
+import { getProjects, getReviews, getServices, getSettings } from "@/lib/data";
 
 export const revalidate = 60;
 
@@ -23,11 +22,12 @@ const LAYOUT = [
 ];
 
 export default async function HomePage() {
-  const [allProjects, services, featuredReviews, allReviews] = await Promise.all([
+  const [allProjects, services, featuredReviews, allReviews, settings] = await Promise.all([
     getProjects(),
     getServices(),
     getReviews({ featuredOnly: true }),
     getReviews(),
+    getSettings(),
   ]);
   const featured = allProjects.filter((p) => p.featured);
   const projects = featured.length ? featured : allProjects;
@@ -37,10 +37,12 @@ export default async function HomePage() {
     <>
       <Hero />
 
-      <section className="border-y border-line py-10">
-        <p className="eyebrow container-x mb-6 text-mute">Trusted by teams who care about craft</p>
-        <Marquee items={site.clients} />
-      </section>
+      {settings.clients.length > 0 && (
+        <section className="border-y border-line py-10">
+          <p className="eyebrow container-x mb-6 text-mute">Trusted by teams who care about craft</p>
+          <Marquee items={settings.clients} />
+        </section>
+      )}
 
       <section className="container-x py-28 sm:py-40">
         <div className="grid gap-10 md:grid-cols-12">
@@ -50,10 +52,9 @@ export default async function HomePage() {
             </p>
           </Reveal>
           <div className="md:col-span-9">
-            <ScrollText
-              text="We're a small, senior team who believe the best digital work comes from sweating the details nobody asked about. No account managers, no hand-offs — just the people doing the work, talking directly to you."
-              className="display text-[clamp(2rem,4.4vw,4.3rem)] leading-[1.05]"
-            />
+            {settings.home_intro && (
+              <ScrollText text={settings.home_intro} className="display text-[clamp(2rem,4.4vw,4.3rem)] leading-[1.05]" />
+            )}
             <Reveal delay={0.1} className="mt-12">
               <Link href="/about" className="group inline-flex items-center gap-3 text-lg">
                 <span className="link-underline">More about the studio</span>
@@ -109,14 +110,16 @@ export default async function HomePage() {
             <ServiceAccordion services={services} />
           </div>
 
-          <div className="mt-28 grid grid-cols-2 gap-y-12 border-t border-line-ink pt-12 md:grid-cols-4">
-            {site.stats.map((s, i) => (
-              <Reveal key={s.label} delay={i * 0.08}>
-                <Counter value={s.value} suffix={s.suffix} className="display block text-7xl sm:text-8xl" />
-                <p className="mt-2 text-ink/60">{s.label}</p>
-              </Reveal>
-            ))}
-          </div>
+          {settings.stats.length > 0 && (
+            <div className="mt-28 grid grid-cols-2 gap-y-12 border-t border-line-ink pt-12 md:grid-cols-4">
+              {settings.stats.map((s, i) => (
+                <Reveal key={s.label} delay={i * 0.08}>
+                  <Counter value={s.value} suffix={s.suffix} className="display block text-7xl sm:text-8xl" />
+                  <p className="mt-2 text-ink/60">{s.label}</p>
+                </Reveal>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

@@ -34,19 +34,20 @@ Dev admin login when `ADMIN_EMAIL`/`ADMIN_PASSWORD` aren't set: `admin@studio.de
 
 | Name | Description |
 | --- | --- |
-| `DATABASE_URL` | Supabase Postgres connection string. On Vercel use the **Transaction pooler** URL (port 6543). |
-| `ADMIN_EMAIL` / `ADMIN_PASSWORD` | Admin login credentials. Required in production. |
+| `DATABASE_URL` | Supabase Postgres connection string. Use the **Session pooler** URL (port 5432) — the direct host is IPv6-only and the transaction pooler stalls on parallel queries. |
+| `ADMIN_EMAIL` / `ADMIN_PASSWORD` | First admin account, created by `npm run db:setup`. After that, manage users and passwords in Admin → Users. |
 | `AUTH_SECRET` | 32+ random chars used to sign session cookies. Required in production. |
 | `NEXT_PUBLIC_SITE_URL` | Public site URL for metadata/sitemap. |
 
 ## Deploying to Vercel
 
 1. Import the GitHub repo in Vercel (framework auto-detected as Next.js).
-2. Add the environment variables above (use the Supabase **pooler** connection string).
+2. Add `DATABASE_URL` (Session pooler) and `AUTH_SECRET` as environment variables.
 3. Run `npm run db:setup` once locally against the production database.
 
 ## Customising
 
-- Studio name, contact details, socials, stats, client list: `src/lib/site.ts`
+- Contact details, socials, stats, client list, About copy and team: Admin → Settings / Team
+- Studio name and navigation: `src/lib/site.ts`
 - Colours, fonts and motion tokens: `src/app/globals.css`
 - Seed content: `src/lib/seed.ts` · Schema: `supabase/schema.sql`

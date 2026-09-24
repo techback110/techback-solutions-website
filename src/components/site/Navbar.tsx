@@ -10,7 +10,7 @@ import { ThemeToggle } from "../ThemeToggle";
 import { EASE, Magnetic, RollText } from "./motion";
 import { getLenis } from "./SmoothScroll";
 
-export function Navbar() {
+export function Navbar({ email, address }: { email: string; address: string }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
@@ -154,10 +154,10 @@ export function Navbar() {
               transition={{ delay: 0.5 }}
               className="flex flex-col gap-1 text-sm text-mute"
             >
-              <a href={`mailto:${site.email}`} className="text-bone">
-                {site.email}
+              <a href={`mailto:${email}`} className="text-bone">
+                {email}
               </a>
-              <span>{site.location}</span>
+              {address && <span>{address}</span>}
             </motion.div>
           </motion.div>
         )}

@@ -3,16 +3,18 @@ import { Footer } from "@/components/site/Footer";
 import { Navbar } from "@/components/site/Navbar";
 import { Preloader } from "@/components/site/Preloader";
 import { SmoothScroll } from "@/components/site/SmoothScroll";
+import { getSettings } from "@/lib/data";
 import { introScript } from "@/lib/intro";
 
-export default function SiteLayout({ children }: { children: React.ReactNode }) {
+export default async function SiteLayout({ children }: { children: React.ReactNode }) {
+  const settings = await getSettings();
   return (
     <div className="grain">
       <script dangerouslySetInnerHTML={{ __html: introScript }} />
       <Preloader />
       <SmoothScroll />
       <Cursor />
-      <Navbar />
+      <Navbar email={settings.email} address={settings.address} />
       <main>{children}</main>
       <Footer />
     </div>

@@ -136,3 +136,10 @@ export function FormError({ message }: { message?: string }) {
   if (!message) return null;
   return <p className="rounded-lg border border-ember/30 bg-ember/10 px-4 py-3 text-sm text-ember">{message}</p>;
 }
+
+export function FormSuccess({ message }: { message?: string }) {
+  if (!message) return null;
+  return (
+    <p className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-400">{message}</p>
+  );
+}

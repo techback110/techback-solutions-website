@@ -6,6 +6,11 @@ export async function proxy(request: NextRequest) {
   const session = await verifySession(request.cookies.get(SESSION_COOKIE)?.value);
 
   if (pathname === "/admin/login") {
+    if (request.nextUrl.searchParams.has("signedout")) {
+      const res = NextResponse.next();
+      res.cookies.delete(SESSION_COOKIE);
+      return res;
+    }
     if (session) return NextResponse.redirect(new URL("/admin", request.url));
     return NextResponse.next();
   }

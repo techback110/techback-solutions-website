@@ -4,10 +4,11 @@ import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { checkCredentials, requireAdmin } from "@/lib/auth";
+import { authenticate, requireAdmin } from "@/lib/auth";
 import * as db from "@/lib/data";
+import { hashPassword, verifyPassword } from "@/lib/password";
 import { SESSION_COOKIE, SESSION_MAX_AGE, signSession } from "@/lib/session";
-import type { ActionState, Metric } from "@/lib/types";
+import type { ActionState, Metric, SiteSettings } from "@/lib/types";
 import { lines, slugify } from "@/lib/utils";
 
 /* ------------------------------------------------------------------ */
@@ -19,13 +20,14 @@ export async function login(_: ActionState, formData: FormData): Promise<ActionS
   const password = String(formData.get("password") ?? "");
   const next = String(formData.get("next") ?? "/admin");
 
-  if (!checkCredentials(email, password)) {
+  const signedIn = await authenticate(email, password);
+  if (!signedIn) {
     await new Promise((r) => setTimeout(r, 600)); // slow down guessing
     return { error: "Invalid email or password." };
   }
 
   const store = await cookies();
-  store.set(SESSION_COOKIE, await signSession(email), {
+  store.set(SESSION_COOKIE, await signSession(signedIn), {
     httpOnly: true,
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
@@ -250,4 +252,187 @@ export async function removeInquiry(formData: FormData) {
   await requireAdmin();
   await db.deleteInquiry(String(formData.get("id")));
   refresh();
+}
+
+/* ------------------------------------------------------------------ */
+/* Team                                                               */
+/* ------------------------------------------------------------------ */
+
+const teamSchema = z.object({
+  name: z.string().trim().min(2).max(120),
+  role: z.string().trim().max(120),
+  photo_url: z.url("Must be a full URL").nullable(),
+  color: z.string().regex(/^#[0-9a-fA-F]{6}$/, "Use a hex colour like #C08552"),
+  sort_order: z.coerce.number().int().min(0).max(9999),
+  published: z.boolean(),
+});
+
+export async function saveTeamMember(_: ActionState, formData: FormData): Promise<ActionState> {
+  await requireAdmin();
+  const id = optional(formData.get("id"));
+  const parsed = teamSchema.safeParse({
+    name: formData.get("name"),
+    role: formData.get("role") ?? "",
+    photo_url: optional(formData.get("photo_url")),
+    color: formData.get("color") || "#FF4D1C",
+    sort_order: formData.get("sort_order") || 0,
+    published: bool(formData.get("published")),
+  });
+  if (!parsed.success) return invalid(parsed.error);
+
+  try {
+    if (id) await db.updateTeamMember(id, parsed.data);
+    else await db.createTeamMember(parsed.data);
+  } catch (err) {
+    return failure(err);
+  }
+  refresh();
+  redirect("/admin/team");
+}
+
+export async function removeTeamMember(formData: FormData) {
+  await requireAdmin();
+  await db.deleteTeamMember(String(formData.get("id")));
+  refresh();
+}
+
+/* ------------------------------------------------------------------ */
+/* Settings                                                           */
+/* ------------------------------------------------------------------ */
+
+/** Splits "left | right" lines; lines without a "|" get an empty right side. */
+function pairs(v: FormDataEntryValue | null) {
+  return lines(v).map((line) => {
+    const [left, ...rest] = line.split("|");
+    return [left.trim(), rest.join("|").trim()] as const;
+  });
+}
+
+const settingsSchema = z.object({
+  email: z.email("Enter a valid email"),
+  phone: z.string().trim().max(40),
+  address: z.string().trim().max(200),
+  description: z.string().trim().max(400),
+  socials: z.array(z.object({ label: z.string().min(1).max(40), href: z.url("Each link needs a full URL") })).max(12),
+  home_intro: z.string().trim().max(600),
+  clients: z.array(z.string().max(60)).max(40),
+  stats: z
+    .array(z.object({ value: z.number().int().min(0), suffix: z.string().max(4), label: z.string().min(1).max(60) }))
+    .max(4, "Up to 4 stats"),
+  about_intro: z.string().trim().max(600),
+  about_story: z.string().trim().max(1200),
+  principles: z.array(z.object({ title: z.string().min(1).max(80), body: z.string().max(400) })).max(8),
+});
+
+export async function saveSettings(_: ActionState, formData: FormData): Promise<ActionState> {
+  await requireAdmin();
+  const parsed = settingsSchema.safeParse({
+    email: String(formData.get("email") ?? "").trim(),
+    phone: formData.get("phone") ?? "",
+    address: formData.get("address") ?? "",
+    description: formData.get("description") ?? "",
+    socials: pairs(formData.get("socials")).map(([label, href]) => ({ label, href })),
+    home_intro: formData.get("home_intro") ?? "",
+    clients: lines(formData.get("clients")),
+    stats: pairs(formData.get("stats")).map(([value, label]) => {
+      const m = value.match(/^(\d+)\s*(.*)$/);
+      return { value: m ? Number(m[1]) : NaN, suffix: m?.[2] ?? "", label };
+    }),
+    about_intro: formData.get("about_intro") ?? "",
+    about_story: formData.get("about_story") ?? "",
+    principles: pairs(formData.get("principles")).map(([title, body]) => ({ title, body })),
+  } satisfies Record<keyof SiteSettings, unknown>);
+  if (!parsed.success) return invalid(parsed.error);
+
+  try {
+    await db.saveSettings(parsed.data);
+  } catch (err) {
+    return failure(err);
+  }
+  refresh();
+  return { ok: true, message: "Settings saved." };
+}
+
+/* ------------------------------------------------------------------ */
+/* Admin users                                                        */
+/* ------------------------------------------------------------------ */
+
+const password = z.string().min(8, "At least 8 characters").max(200);
+
+const userSchema = z.object({
+  name: z.string().trim().max(120),
+  email: z.email("Enter a valid email"),
+  password,
+});
+
+export async function createUser(_: ActionState, formData: FormData): Promise<ActionState> {
+  await requireAdmin();
+  const parsed = userSchema.safeParse({
+    name: formData.get("name") ?? "",
+    email: String(formData.get("email") ?? "").trim().toLowerCase(),
+    password: formData.get("password") ?? "",
+  });
+  if (!parsed.success) return invalid(parsed.error);
+  if (await db.getAdminUserByEmail(parsed.data.email)) {
+    return { error: "A user with that email already exists.", fieldErrors: { email: ["Already in use"] } };
+  }
+
+  // The first real account replaces the bootstrap login, so make sure whoever
+  // is signed in with it still has a way back in.
+  const isFirst = (await db.getAdminUsers()).length === 0;
+  try {
+    await db.createAdminUser({
+      name: parsed.data.name,
+      email: parsed.data.email,
+      password_hash: await hashPassword(parsed.data.password),
+    });
+  } catch (err) {
+    return failure(err);
+  }
+  revalidatePath("/admin/users");
+  return {
+    ok: true,
+    message: isFirst
+      ? `Created ${parsed.data.email}. From now on only accounts listed here can sign in.`
+      : `Created ${parsed.data.email}.`,
+  };
+}
+
+export async function removeUser(formData: FormData) {
+  const session = await requireAdmin();
+  const id = String(formData.get("id"));
+  const users = await db.getAdminUsers();
+  const target = users.find((u) => u.id === id);
+  // Never delete yourself or the last account — that would lock everyone out.
+  if (!target || target.email === session.email || users.length <= 1) return;
+  await db.deleteAdminUser(id);
+  revalidatePath("/admin/users");
+}
+
+const changePasswordSchema = z
+  .object({ current: z.string().min(1, "Required"), next: password, confirm: z.string() })
+  .refine((d) => d.next === d.confirm, { path: ["confirm"], message: "Passwords don't match" });
+
+export async function changePassword(_: ActionState, formData: FormData): Promise<ActionState> {
+  const session = await requireAdmin();
+  const parsed = changePasswordSchema.safeParse({
+    current: formData.get("current") ?? "",
+    next: formData.get("next") ?? "",
+    confirm: formData.get("confirm") ?? "",
+  });
+  if (!parsed.success) return invalid(parsed.error);
+
+  const user = await db.getAdminUserByEmail(session.email);
+  if (!user) {
+    return { error: "You're signed in with the setup login. Create your own account below first, then sign in with it." };
+  }
+  if (!(await verifyPassword(parsed.data.current, user.password_hash))) {
+    return { error: "Current password is incorrect.", fieldErrors: { current: ["Incorrect password"] } };
+  }
+  try {
+    await db.updateAdminUser(user.id, { password_hash: await hashPassword(parsed.data.next) });
+  } catch (err) {
+    return failure(err);
+  }
+  return { ok: true, message: "Password updated." };
 }

@@ -1,4 +1,4 @@
-import type { Project, Review, Service } from "./types";
+import type { Project, Review, Service, SiteSettings, TeamMember } from "./types";
 
 type Seed<T> = Omit<T, "id" | "created_at">;
 
@@ -260,3 +260,43 @@ export const seedReviews: Seed<Review>[] = [
     approved: true,
   },
 ];
+
+export const seedTeam: Seed<TeamMember>[] = [
+  { name: "Arman Noyada", role: "Founder, Engineering", photo_url: null, color: "#ff4d1c", sort_order: 1, published: true },
+  { name: "Isha Kapoor", role: "Design Director", photo_url: null, color: "#c08552", sort_order: 2, published: true },
+  { name: "Leo Fernandes", role: "Brand & Motion", photo_url: null, color: "#6e8b74", sort_order: 3, published: true },
+  { name: "Nina Das", role: "Product Strategy", photo_url: null, color: "#3f5e8c", sort_order: 4, published: true },
+];
+
+export const seedSettings: SiteSettings = {
+  email: "hello@noyada.studio",
+  phone: "",
+  address: "",
+  description:
+    "Noyada is an independent studio crafting brands, websites and digital products for companies that refuse to look like everyone else.",
+  socials: [
+    { label: "Instagram", href: "https://instagram.com" },
+    { label: "LinkedIn", href: "https://linkedin.com" },
+    { label: "Dribbble", href: "https://dribbble.com" },
+    { label: "Behance", href: "https://behance.net" },
+  ],
+  home_intro:
+    "We're a small, senior team who believe the best digital work comes from sweating the details nobody asked about. No account managers, no hand-offs — just the people doing the work, talking directly to you.",
+  clients: ["Halden", "Verso", "Atlas Freight", "Mira", "Kinfolk", "Pulse", "Northwind", "Oreo Labs", "Sable & Co", "Lumen"],
+  stats: [
+    { value: 120, suffix: "+", label: "Projects shipped" },
+    { value: 9, suffix: "", label: "Years in practice" },
+    { value: 14, suffix: "", label: "Countries served" },
+    { value: 98, suffix: "%", label: "Clients who return" },
+  ],
+  about_intro:
+    "Noyada Studio is an independent design and engineering studio. We partner with founders and marketing teams who want work that looks considered and performs in the real world.",
+  about_story:
+    "We started as two people who were tired of beautiful websites that didn't work and functional products nobody loved. Nine years later we're still small, still hands-on, and still obsessed with getting both right at the same time.",
+  principles: [
+    { title: "Craft is a strategy", body: "Details compound. The last 10% of polish is what people remember and what competitors can't copy." },
+    { title: "Senior hands only", body: "The people you meet in the pitch are the people doing the work. No juniors hidden behind a deck." },
+    { title: "Measure what matters", body: "Beautiful is the baseline. We agree on the numbers that define success before we start." },
+    { title: "Small on purpose", body: "We take on a handful of projects at a time so each one gets our full attention." },
+  ],
+};

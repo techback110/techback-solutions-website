@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { site } from "@/lib/site";
+import { getSettings } from "@/lib/data";
 import { Magnetic, Reveal, SplitText } from "./motion";
 
-export function CTA() {
+export async function CTA() {
+  const { email } = await getSettings();
   return (
     <section className="relative overflow-hidden bg-ember py-28 text-night sm:py-36">
       <div className="container-x relative">
@@ -30,8 +31,8 @@ export function CTA() {
           </div>
         </div>
         <Reveal delay={0.2} className="mt-16 flex flex-col gap-2 border-t border-night/20 pt-6 sm:flex-row sm:justify-between">
-          <a href={`mailto:${site.email}`} className="link-underline text-lg">
-            {site.email}
+          <a href={`mailto:${email}`} className="link-underline text-lg">
+            {email}
           </a>
           <span className="text-night/60">Typical reply time — under 24 hours</span>
         </Reveal>
