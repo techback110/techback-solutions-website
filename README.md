@@ -34,7 +34,7 @@ Dev admin login when `ADMIN_EMAIL`/`ADMIN_PASSWORD` aren't set: `admin@studio.de
 
 | Name | Description |
 | --- | --- |
-| `DATABASE_URL` | Supabase Postgres connection string. Use the **Session pooler** URL (port 5432) — the direct host is IPv6-only and the transaction pooler stalls on parallel queries. |
+| `DATABASE_URL` | Supabase Postgres connection string. Use the **Transaction pooler** URL (port 6543) — the direct host is IPv6-only and the session pooler caps out at 15 connections. |
 | `ADMIN_EMAIL` / `ADMIN_PASSWORD` | First admin account, created by `npm run db:setup`. After that, manage users and passwords in Admin → Users. |
 | `AUTH_SECRET` | 32+ random chars used to sign session cookies. Required in production. |
 | `NEXT_PUBLIC_SITE_URL` | Public site URL for metadata/sitemap. |
@@ -42,7 +42,7 @@ Dev admin login when `ADMIN_EMAIL`/`ADMIN_PASSWORD` aren't set: `admin@studio.de
 ## Deploying to Vercel
 
 1. Import the GitHub repo in Vercel (framework auto-detected as Next.js).
-2. Add `DATABASE_URL` (Session pooler) and `AUTH_SECRET` as environment variables.
+2. Add `DATABASE_URL` (Transaction pooler, port 6543) and `AUTH_SECRET` as environment variables.
 3. Run `npm run db:setup` once locally against the production database.
 
 ## Customising

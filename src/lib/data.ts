@@ -1,6 +1,6 @@
 import type postgres from "postgres";
 import { cache } from "react";
-import { sql } from "./db";
+import { query, sql } from "./db";
 import { seedProjects, seedReviews, seedServices, seedSettings, seedTeam } from "./seed";
 import type { AdminUser, Inquiry, Project, Review, Service, SiteSettings, TeamMember } from "./types";
 
@@ -68,7 +68,7 @@ function serialize(data: Record<string, unknown>) {
 async function all<K extends Table>(table: K): Promise<Tables[K][]> {
   if (!sql) return ([...memory()[table]] as Tables[K][]);
   try {
-    const rows = await sql`select * from ${sql(table as string)}`;
+    const rows = await query((db) => db`select * from ${db(table as string)}`);
     g.__dbError = undefined;
     return rows.map((r) => ({
       ...r,
@@ -87,7 +87,7 @@ async function insert<K extends Table>(table: K, data: Input<K>) {
     (memory()[table] as Tables[K][]).unshift(row);
     return row;
   }
-  const [row] = await sql`insert into ${sql(table as string)} ${sql(serialize(data))} returning *`;
+  const [row] = await query((db) => db`insert into ${db(table as string)} ${db(serialize(data))} returning *`);
   return row as unknown as Tables[K];
 }
 
@@ -99,7 +99,7 @@ async function update<K extends Table>(table: K, id: string, data: Partial<Input
     rows[i] = { ...rows[i], ...data };
     return rows[i];
   }
-  const [row] = await sql`update ${sql(table as string)} set ${sql(serialize(data))} where id = ${id} returning *`;
+  const [row] = await query((db) => db`update ${db(table as string)} set ${db(serialize(data))} where id = ${id} returning *`);
   if (!row) throw new Error("Record not found");
   return row as unknown as Tables[K];
 }
@@ -110,7 +110,7 @@ async function remove(table: Table, id: string) {
     mem[table] = mem[table].filter((r) => r.id !== id) as never;
     return;
   }
-  await sql`delete from ${sql(table as string)} where id = ${id}`;
+  await query((db) => db`delete from ${db(table as string)} where id = ${id}`);
 }
 
 const byOrder = <T extends { sort_order: number }>(a: T, b: T) => a.sort_order - b.sort_order;
@@ -224,7 +224,7 @@ export const deleteAdminUser = (id: string) => remove("admin_users", id);
 export const getSettings = cache(async (): Promise<SiteSettings> => {
   if (!sql) return { ...seedSettings, ...g.__settings };
   try {
-    const [row] = await sql`select value from settings where key = 'site'`;
+    const [row] = await query((db) => db`select value from settings where key = 'site'`);
     return { ...seedSettings, ...(row?.value as Partial<SiteSettings> | undefined) };
   } catch (err) {
     g.__dbError = err instanceof Error ? err.message : String(err);
@@ -238,9 +238,9 @@ export async function saveSettings(value: SiteSettings) {
     g.__settings = value;
     return;
   }
-  await sql`
+  await query((db) => db`
     insert into settings (key, value, updated_at)
-    values ('site', ${sql.json(value as unknown as postgres.JSONValue)}, now())
+    values ('site', ${db.json(value as unknown as postgres.JSONValue)}, now())
     on conflict (key) do update set value = excluded.value, updated_at = now()
-  `;
+  `);
 }

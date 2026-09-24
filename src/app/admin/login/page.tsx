@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { loginOptions } from "@/lib/auth";
+import { dataSource } from "@/lib/data";
 import { site } from "@/lib/site";
 import { LoginForm } from "./LoginForm";
 
@@ -9,6 +10,7 @@ export const metadata: Metadata = { title: "Admin sign in", robots: { index: fal
 export default async function LoginPage({ searchParams }: PageProps<"/admin/login">) {
   const { next } = await searchParams;
   const login = await loginOptions();
+  const source = dataSource();
 
   return (
     <main className="relative grid min-h-svh place-items-center overflow-hidden px-4">
@@ -29,8 +31,20 @@ export default async function LoginPage({ searchParams }: PageProps<"/admin/logi
             <LoginForm next={typeof next === "string" ? next : "/admin"} />
           ) : (
             <p className="rounded-lg border border-ember/30 bg-ember/10 p-4 text-sm text-ember">
-              Admin login is disabled. Run <code>npm run db:setup</code> to create the first account, or set{" "}
-              <code>ADMIN_EMAIL</code> and <code>ADMIN_PASSWORD</code> environment variables.
+              {source.mode === "memory" ? (
+                <>
+                  Admin login is disabled: <code>DATABASE_URL</code> is not set for this deployment. Add it in your
+                  hosting settings and redeploy.
+                </>
+              ) : source.error ? (
+                // Details stay in the server logs; this page is public.
+                <>Admin login is unavailable: the database could not be reached. Check <code>DATABASE_URL</code>.</>
+              ) : (
+                <>
+                  Admin login is disabled: no accounts exist yet. Run <code>npm run db:setup</code> to create the first
+                  one, or set <code>ADMIN_EMAIL</code> and <code>ADMIN_PASSWORD</code>.
+                </>
+              )}
             </p>
           )}
           {login.devDefault && (
