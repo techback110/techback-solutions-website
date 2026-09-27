@@ -6,32 +6,35 @@ import { Process } from "@/components/site/Process";
 import { SectionHeading } from "@/components/site/SectionHeading";
 import { ServiceAccordion } from "@/components/site/ServiceAccordion";
 import { getServices } from "@/lib/data";
+import { pad } from "@/lib/utils";
 
 export const revalidate = 60;
 export const metadata: Metadata = {
   title: "Services",
-  description: "Brand identity, websites, product design, e-commerce, motion and growth.",
+  description: "Brand identity, websites, product design, e-commerce, operations panels, CRMs and growth.",
 };
 
 const ENGAGEMENTS = [
   {
     name: "Project",
-    price: "From $8k",
-    body: "A defined scope with a fixed timeline and fee. Ideal for a new brand, a website or an MVP.",
-    points: ["Fixed scope & fee", "Weekly Friday reviews", "Launch support included"],
+    body: "A defined scope with a clear timeline. Ideal for a new brand, a website or an MVP.",
+    points: ["Fixed scope & timeline", "Weekly progress reviews", "Launch support included"],
   },
   {
     name: "Partnership",
-    price: "From $6k / mo",
-    body: "A dedicated senior squad embedded with your team, shipping continuously month after month.",
-    points: ["Design + engineering squad", "Shared Slack & roadmap", "Pause or scale anytime"],
+    body: "A dedicated squad embedded with your team, shipping continuously month after month.",
+    points: ["Design + engineering squad", "Shared roadmap & updates", "Scale up or down anytime"],
     highlight: true,
   },
   {
-    name: "Sprint",
-    price: "From $3k",
-    body: "One or two focused weeks to unblock a decision: an audit, a prototype, or a strategy workshop.",
-    points: ["5–10 working days", "Clear written output", "Credited toward a project"],
+    name: "SaaS",
+    body: "We design, build and run your software product — from first version to paying customers.",
+    points: ["Multi-tenant platform", "Subscriptions & user accounts", "Hosting & ongoing support"],
+  },
+  {
+    name: "Consultancy",
+    body: "Expert guidance on product, technology and operations when you need a clear direction.",
+    points: ["Technical & UX audits", "Architecture & roadmaps", "Clear written recommendations"],
   },
 ];
 
@@ -53,7 +56,7 @@ export default async function ServicesPage() {
 
       <section className="container-x py-28 sm:py-40">
         <SectionHeading eyebrow="Ways to work together" title="Pick the *shape* that fits." />
-        <div className="mt-20 grid gap-6 md:grid-cols-3">
+        <div className="mt-20 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
           {ENGAGEMENTS.map((e, i) => (
             <Reveal
               key={e.name}
@@ -67,8 +70,8 @@ export default async function ServicesPage() {
               {e.highlight && (
                 <span className="eyebrow absolute right-6 top-6 rounded-full bg-ink px-3 py-1 text-bone">Most chosen</span>
               )}
-              <p className="eyebrow opacity-60">{e.name}</p>
-              <p className="display mt-6 text-5xl">{e.price}</p>
+              <p className="eyebrow opacity-60">{pad(i + 1)}</p>
+              <h3 className="display mt-6 text-5xl xl:text-[2.75rem]">{e.name}</h3>
               <p className="mt-6 leading-relaxed opacity-75">{e.body}</p>
               <ul className="mt-8 space-y-3 border-t border-current/15 pt-8">
                 {e.points.map((p) => (

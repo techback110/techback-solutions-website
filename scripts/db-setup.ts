@@ -6,6 +6,7 @@
 import { readFileSync } from "node:fs";
 import postgres from "postgres";
 import { normalizeDatabaseUrl } from "../src/lib/db-url.ts";
+import { pgTextArray } from "../src/lib/pg-array.ts";
 import { hashPassword } from "../src/lib/password.ts";
 import { seedProjects, seedReviews, seedServices, seedSettings, seedTeam } from "../src/lib/seed.ts";
 
@@ -27,7 +28,7 @@ async function seed(table: string, rows: Record<string, unknown>[]) {
     const data: Record<string, unknown> = {};
     for (const [k, v] of Object.entries(row)) {
       if (Array.isArray(v) && v.some((x) => typeof x === "object")) data[k] = sql.json(v as postgres.JSONValue);
-      else if (Array.isArray(v)) data[k] = sql.array(v as string[]);
+      else if (Array.isArray(v)) data[k] = pgTextArray(v as string[]);
       else data[k] = v;
     }
     await sql`insert into ${sql(table)} ${sql(data)}`;

@@ -1,4 +1,4 @@
-# Noyada Studio — agency website
+# TechBack Solutions — agency website
 
 A premium agency website with a full admin panel, built with **Next.js 16 (App Router) + TypeScript**, **Tailwind CSS v4**, **Motion** animations and **Supabase Postgres**. Deploys to **Vercel** as a single app.
 

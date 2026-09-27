@@ -44,12 +44,12 @@ export const seedServices: Seed<Service>[] = [
     published: true,
   },
   {
-    slug: "motion-3d",
-    title: "Motion & 3D",
-    summary: "Movement with meaning — micro-interactions, launch films and WebGL.",
+    slug: "operations-panels-crm",
+    title: "Operations Panels & CRM",
+    summary: "Admin panels, dashboards and CRMs built around the way your team actually works.",
     description:
-      "Motion is how a brand behaves. We design interaction principles, product animations, launch films and real-time 3D that make interfaces feel alive without slowing them down.",
-    deliverables: ["Interaction design", "Launch films", "WebGL / Three.js", "Lottie & Rive", "Motion guidelines"],
+      "Spreadsheets and off-the-shelf tools only go so far. We build custom operations panels and CRMs that manage your customers, leads, orders and teams in one place — with the roles, automations and reports your business runs on.",
+    deliverables: ["Operations & admin panels", "Custom CRM", "Roles & permissions", "Workflow automation", "Reports & dashboards", "Integrations & APIs"],
     sort_order: 5,
     published: true,
   },
@@ -273,7 +273,7 @@ export const seedSettings: SiteSettings = {
   phone: "",
   address: "",
   description:
-    "Noyada is an independent studio crafting brands, websites and digital products for companies that refuse to look like everyone else.",
+    "TechBack Solutions is an independent studio crafting brands, websites and digital products for companies that refuse to look like everyone else.",
   socials: [
     { label: "Instagram", href: "https://instagram.com" },
     { label: "LinkedIn", href: "https://linkedin.com" },
@@ -290,7 +290,7 @@ export const seedSettings: SiteSettings = {
     { value: 98, suffix: "%", label: "Clients who return" },
   ],
   about_intro:
-    "Noyada Studio is an independent design and engineering studio. We partner with founders and marketing teams who want work that looks considered and performs in the real world.",
+    "TechBack Solutions is an independent design and engineering studio. We partner with founders and marketing teams who want work that looks considered and performs in the real world.",
   about_story:
     "We started as two people who were tired of beautiful websites that didn't work and functional products nobody loved. Nine years later we're still small, still hands-on, and still obsessed with getting both right at the same time.",
   principles: [

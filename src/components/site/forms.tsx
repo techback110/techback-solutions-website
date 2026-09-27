@@ -128,7 +128,7 @@ export function ContactForm({ services }: { services: string[] }) {
             <Field name="email" label="Email" type="email" required errors={fe.email} />
           </div>
           <Field name="company" label="Company (optional)" errors={fe.company} />
-          <Chips name="budget" label="Project budget" options={site.budgets} />
+          <Chips name="budget" label="How would you like to work?" options={site.engagements} />
           <Field name="message" label="Tell us about your project" textarea required minLength={10} errors={fe.message} />
           {state.error && <p className="text-ember">{state.error}</p>}
           <Submit pending={pending}>Send message</Submit>

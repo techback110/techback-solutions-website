@@ -1,6 +1,7 @@
 import type postgres from "postgres";
 import { cache } from "react";
 import { query, sql } from "./db";
+import { pgTextArray } from "./pg-array";
 import { seedProjects, seedReviews, seedServices, seedSettings, seedTeam } from "./seed";
 import type { AdminUser, Inquiry, Project, Review, Service, SiteSettings, TeamMember } from "./types";
 
@@ -50,14 +51,17 @@ export function dataSource() {
 /* Generic table helpers                                              */
 /* ------------------------------------------------------------------ */
 
-/** Arrays of objects (e.g. project metrics) are stored as jsonb. */
+/** jsonb columns; every other array column is text[]. */
+const JSON_COLUMNS = new Set(["metrics"]);
+
 function serialize(data: Record<string, unknown>) {
   const out: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(data)) {
-    if (Array.isArray(value) && value.some((v) => typeof v === "object" && v !== null)) {
+    // Decided by column, not contents: an empty list is valid for both kinds.
+    if (JSON_COLUMNS.has(key)) {
       out[key] = sql!.json(value as postgres.JSONValue);
     } else if (Array.isArray(value)) {
-      out[key] = sql!.array(value as string[]);
+      out[key] = pgTextArray(value as string[]);
     } else {
       out[key] = value;
     }

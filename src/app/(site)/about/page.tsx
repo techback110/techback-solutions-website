@@ -24,7 +24,7 @@ export default async function AboutPage() {
       <PageHeader eyebrow="The studio" title="Small team. *Serious* craft." intro={settings.about_intro || undefined} />
 
       <section className="border-y border-line py-10">
-        <Marquee items={["Strategy", "Identity", "Websites", "Products", "Commerce", "Motion", "Growth"]} />
+        <Marquee items={["Strategy", "Identity", "Websites", "Products", "Commerce", "Operations", "Growth"]} />
       </section>
 
       {settings.about_story && (

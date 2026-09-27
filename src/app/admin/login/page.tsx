@@ -22,7 +22,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/admin/logi
       />
       <div className="relative w-full max-w-sm">
         <Link href="/" className="mb-10 flex items-center justify-center gap-2.5">
-          <span className="grid size-9 place-items-center rounded-full bg-ember font-serif text-2xl italic leading-none text-night">n</span>
+          <span className="grid size-9 place-items-center rounded-full bg-ember font-serif text-2xl italic leading-none text-night">t</span>
           <span className="font-medium">{site.name}</span>
         </Link>
         <div className="rounded-2xl border border-line bg-ink-2/80 p-8 backdrop-blur">

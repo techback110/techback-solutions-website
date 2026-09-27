@@ -6,7 +6,7 @@ import { site } from "@/lib/site";
 import { introDelay } from "./Preloader";
 import { EASE, SplitText } from "./motion";
 
-const WORDS = ["Identity", "Websites", "Products", "Commerce", "Motion"];
+const WORDS = ["Identity", "Websites", "Products", "Commerce", "Operations"];
 
 export function Hero() {
   const ref = useRef<HTMLElement>(null);
