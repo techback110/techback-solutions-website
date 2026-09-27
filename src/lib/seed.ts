@@ -269,7 +269,7 @@ export const seedTeam: Seed<TeamMember>[] = [
 ];
 
 export const seedSettings: SiteSettings = {
-  email: "hello@noyada.studio",
+  email: "armancompiler@gmail.com",
   phone: "",
   address: "",
   description:
