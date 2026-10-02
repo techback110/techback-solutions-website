@@ -1,10 +1,11 @@
 "use client";
 
+import { Lock } from "lucide-react";
 import { motion, useScroll, useTransform } from "motion/react";
 import Link from "next/link";
 import { useRef } from "react";
 import type { Project } from "@/lib/types";
-import { cn } from "@/lib/utils";
+import { cn, isConfidential } from "@/lib/utils";
 import { EASE } from "./motion";
 import { ProjectVisual } from "./ProjectVisual";
 
@@ -36,6 +37,19 @@ export function ProjectCard({
           <motion.div style={{ y }} className="absolute -inset-y-[8%] inset-x-0">
             <ProjectVisual project={project} className="size-full" />
           </motion.div>
+          {(project.live_url || isConfidential(project)) && (
+            <span className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-ink/70 px-3 py-1 text-xs text-bone backdrop-blur">
+              {project.live_url ? (
+                <>
+                  <span className="size-1.5 rounded-full bg-emerald-400" aria-hidden /> Live site
+                </>
+              ) : (
+                <>
+                  <Lock className="size-3" aria-hidden /> Under NDA
+                </>
+              )}
+            </span>
+          )}
           <div className="absolute bottom-4 left-4 flex flex-wrap gap-1.5 opacity-0 transition-all duration-500 group-hover:opacity-100">
             {project.tags.slice(0, 3).map((t) => (
               <span key={t} className="rounded-full bg-ink/70 px-3 py-1 text-xs text-bone backdrop-blur">

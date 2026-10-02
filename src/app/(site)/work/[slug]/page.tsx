@@ -1,3 +1,4 @@
+import { Lock } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -5,6 +6,7 @@ import { CTA } from "@/components/site/CTA";
 import { Reveal, SplitText } from "@/components/site/motion";
 import { ProjectVisual } from "@/components/site/ProjectVisual";
 import { getProjectBySlug, getProjects } from "@/lib/data";
+import { isConfidential } from "@/lib/utils";
 
 export const revalidate = 60;
 
@@ -94,6 +96,22 @@ export default async function CaseStudyPage({ params }: PageProps<"/work/[slug]"
               >
                 Visit live site ↗
               </a>
+            </Reveal>
+          )}
+          {isConfidential(project) && (
+            <Reveal>
+              <div className="mt-4 flex flex-col gap-5 rounded-[6px] border border-line p-6 sm:flex-row sm:items-center sm:justify-between">
+                <p className="flex items-start gap-3 text-bone/70">
+                  <Lock className="mt-1 size-4 shrink-0" style={{ color: project.accent }} aria-hidden />
+                  Built under NDA, so the client and live product stay private. Happy to walk you through it on a call.
+                </p>
+                <Link
+                  href="/contact"
+                  className="shrink-0 rounded-full bg-ember px-6 py-3 text-sm font-medium text-night transition-colors hover:bg-ember-2"
+                >
+                  Build something similar →
+                </Link>
+              </div>
             </Reveal>
           )}
         </div>

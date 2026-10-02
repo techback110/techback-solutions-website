@@ -7,7 +7,7 @@ import { getProjects } from "@/lib/data";
 export const revalidate = 60;
 export const metadata: Metadata = {
   title: "Work",
-  description: "Selected brand, web and product projects.",
+  description: "Websites, SaaS platforms, booking portals, operations panels and CRMs we have built.",
 };
 
 export default async function WorkPage() {
@@ -17,7 +17,7 @@ export default async function WorkPage() {
       <PageHeader
         eyebrow={`Index — ${projects.length} projects`}
         title="Proof, not *promises.*"
-        intro="Brands, websites and products we've shaped with ambitious teams. Every project is a partnership — and every one is measured by what it changed."
+        intro="Live websites and SaaS products, plus confidential platforms — booking portals, operations panels, CRMs, quiz and HR systems — that run our clients' businesses every day."
       />
       <section className="container-x pb-32">
         <WorkIndex projects={projects} />

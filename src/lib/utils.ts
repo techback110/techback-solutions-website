@@ -33,3 +33,8 @@ export function formatDate(value: string) {
 export function pad(n: number) {
   return String(n).padStart(2, "0");
 }
+
+/** Credential projects: no public link and a client starting with "Confidential". */
+export function isConfidential(project: { client: string; live_url: string | null }) {
+  return !project.live_url && /^confidential/i.test(project.client.trim());
+}

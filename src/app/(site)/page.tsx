@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { CTA } from "@/components/site/CTA";
 import { Hero } from "@/components/site/Hero";
+import { Platforms } from "@/components/site/Platforms";
 import { Marquee } from "@/components/site/Marquee";
 import { Counter, Reveal } from "@/components/site/motion";
 import { Process } from "@/components/site/Process";
@@ -75,7 +76,7 @@ export default async function HomePage() {
           aside={
             <div className="flex flex-col gap-6 md:items-end md:text-right">
               <p className="max-w-xs text-bone/60">
-                A few recent collaborations across brand, web and product — each measured by what it changed.
+                Live websites, SaaS products and the confidential platforms that run our clients&apos; businesses.
               </p>
               <Link
                 href="/work"
@@ -93,11 +94,13 @@ export default async function HomePage() {
         </div>
       </section>
 
+      <Platforms index="03" projectSlugs={allProjects.map((p) => p.slug)} />
+
       <section className="rounded-[2rem] bg-bone py-28 text-ink sm:rounded-[3rem] sm:py-40">
         <div className="container-x">
           <SectionHeading
             dark={false}
-            index="03"
+            index="04"
             eyebrow="Capabilities"
             title="Everything a brand needs to *show up.*"
             aside={
@@ -125,7 +128,7 @@ export default async function HomePage() {
 
       <section className="py-28 sm:py-40">
         <div className="container-x">
-          <SectionHeading index="04" eyebrow="How we work" title="A process built on *clarity.*" />
+          <SectionHeading index="05" eyebrow="How we work" title="A process built on *clarity.*" />
           <div className="mt-24">
             <Process />
           </div>
@@ -137,7 +140,7 @@ export default async function HomePage() {
           <div className="mb-16 flex items-end justify-between gap-6">
             <Reveal>
               <p className="eyebrow text-mute">
-                <span className="text-ember">(05)</span> Kind words
+                <span className="text-ember">(06)</span> Kind words
               </p>
             </Reveal>
             <Reveal>
