@@ -250,63 +250,8 @@ export const seedProjects: Seed<Project>[] = [
   },
 ];
 
-export const seedReviews: Seed<Review>[] = [
-  {
-    author: "Elena Marsh",
-    role: "Founder",
-    company: "Halden Coffee",
-    avatar_url: null,
-    rating: 5,
-    content:
-      "They didn't just redesign our store — they understood why people buy from us. Subscriptions tripled in a quarter and our team finally loves the brand again.",
-    featured: true,
-    approved: true,
-  },
-  {
-    author: "Dr. Rahul Menon",
-    role: "Chief Product Officer",
-    company: "Verso Health",
-    avatar_url: null,
-    rating: 5,
-    content:
-      "Rare mix of taste and rigour. Every design decision came with a reason and a test behind it. Our patients noticed the difference within a week.",
-    featured: true,
-    approved: true,
-  },
-  {
-    author: "Jonas Brandt",
-    role: "Head of Digital",
-    company: "Atlas Freight",
-    avatar_url: null,
-    rating: 5,
-    content:
-      "We handed them a mess of spreadsheets and got back a product our customers now brag about. Communication was calm, clear and always on time.",
-    featured: true,
-    approved: true,
-  },
-  {
-    author: "Sofia Alvarez",
-    role: "Co-founder",
-    company: "Mira",
-    avatar_url: null,
-    rating: 5,
-    content:
-      "The identity feels like it was always ours. Retailers comment on the packaging before they even see the product.",
-    featured: false,
-    approved: true,
-  },
-  {
-    author: "Priya Shah",
-    role: "Marketing Lead",
-    company: "Pulse",
-    avatar_url: null,
-    rating: 4,
-    content:
-      "Fast, thoughtful and genuinely fun to work with. The motion work alone changed how people talk about our app.",
-    featured: false,
-    approved: true,
-  },
-];
+/** Reviews come from real clients via the site form or Admin → Reviews; none are seeded. */
+export const seedReviews: Seed<Review>[] = [];
 
 export const seedTeam: Seed<TeamMember>[] = [
   { name: "Arman Noyada", role: "Founder, Engineering", photo_url: null, color: "#ff4d1c", sort_order: 1, published: true },

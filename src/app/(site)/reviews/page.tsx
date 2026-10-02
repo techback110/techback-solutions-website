@@ -20,8 +20,28 @@ export default async function ReviewsPage() {
       <PageHeader
         eyebrow="Client reviews"
         title="In their *own* words."
-        intro="We measure our work by the relationships it builds. Here's what the teams we've partnered with have to say."
+        intro={
+          reviews.length
+            ? "We measure our work by the relationships it builds. Here's what the teams we've partnered with have to say."
+            : "We measure our work by the relationships it builds. Reviews from the teams we've partnered with will appear here."
+        }
       />
+
+      {reviews.length === 0 && (
+        <section className="container-x pb-16">
+          <Reveal className="flex flex-col gap-6 rounded-[1.25rem] border border-dashed border-line p-8 sm:flex-row sm:items-center sm:justify-between sm:p-10">
+            <p className="max-w-xl text-lg text-bone/70">
+              We&apos;re collecting reviews from recent clients. Worked with us? Yours could be the first one here.
+            </p>
+            <a
+              href="#write"
+              className="shrink-0 self-start rounded-full bg-ember px-6 py-3 text-sm font-medium text-night transition-colors hover:bg-ember-2 sm:self-auto"
+            >
+              Write a review ↓
+            </a>
+          </Reveal>
+        </section>
+      )}
 
       {reviews.length > 0 && (
         <section className="container-x pb-10">
