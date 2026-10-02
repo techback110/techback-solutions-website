@@ -210,13 +210,13 @@ export const seedProjects: Seed<Project>[] = [
     year: 2026,
     summary: "An HR platform for employee records, attendance, leave and payroll, with a self-service portal for every employee.",
     description:
-      "Growing companies outgrow spreadsheets for HR fast: records scatter, leave approvals stall and payroll turns into a monthly scramble.\n\nThe platform brings it together — employee profiles and documents, attendance and shifts, leave policies with approval workflows, and payroll-ready reports.\n\nEmployees get a self-service portal for leave, payslips and requests; managers approve from anywhere; HR sees the whole organisation at a glance.\n\nIt's multi-tenant, so one deployment serves many companies — each with its own policies, roles and data, fully isolated.",
+      "Growing companies outgrow spreadsheets for HR fast: records scatter, leave approvals stall and payroll turns into a monthly scramble.\n\nThe platform brings it together — employee profiles and documents, attendance and shifts, leave policies with approval workflows, and payroll-ready reports.\n\nEmployees get a self-service portal for leave, payslips and requests; managers approve from anywhere; HR sees the whole organisation at a glance.\n\nIt runs on the client's own servers, so employee data never leaves their infrastructure — and we handle the deployment and updates there.",
     cover_image: null,
     gallery: [],
-    tags: ["HRMS", "Attendance & leave", "Payroll reports", "Multi-tenant"],
+    tags: ["HRMS", "Attendance & leave", "Payroll reports", "Self-hosted"],
     metrics: [
       { value: "Self-service", label: "A portal for every employee" },
-      { value: "Multi-tenant", label: "One platform, many companies" },
+      { value: "Self-hosted", label: "Runs on the client's own servers" },
       { value: "Workflows", label: "Leave and request approvals" },
     ],
     live_url: null,

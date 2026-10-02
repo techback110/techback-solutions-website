@@ -33,7 +33,7 @@ const PLATFORMS = [
     icon: Users,
     title: "HR & workforce systems",
     body: "Attendance, leave, payroll reports and shift-by-shift productivity tracking for office teams and on-ground crews alike.",
-    proof: { slug: "workforce-productivity", label: "See workforce productivity" },
+    proof: { slug: "hr-platform", label: "See the HR platform" },
   },
   {
     icon: Workflow,
@@ -51,6 +51,7 @@ const BUILT_IN = [
   "Live dashboards",
   "APIs & integrations",
   "Web & mobile",
+  "Cloud or your own servers",
 ];
 
 /** The "what we build" pitch. Proof links only render for case studies that exist. */
@@ -65,7 +66,7 @@ export function Platforms({ index, projectSlugs }: { index?: string; projectSlug
         title="Software that *scales* with you."
         aside={
           <p className="max-w-xs text-bone/60 md:ml-auto md:text-right">
-            From a single website to a SaaS serving hundreds of businesses — we design it, build it and keep it running.
+            From a single website to a SaaS serving hundreds of businesses — we design it, build it and run it in the cloud or on your own servers.
           </p>
         }
       />
