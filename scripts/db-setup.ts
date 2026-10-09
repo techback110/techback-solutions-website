@@ -10,8 +10,11 @@ import { pgTextArray } from "../src/lib/pg-array.ts";
 import { hashPassword } from "../src/lib/password.ts";
 import { seedProjects, seedReviews, seedServices, seedSettings, seedTeam } from "../src/lib/seed.ts";
 
-const url = normalizeDatabaseUrl(process.env.DATABASE_URL);
-if (!url || url.includes("[YOUR-PASSWORD]")) {
+const raw = process.env.DATABASE_URL;
+const url = normalizeDatabaseUrl(raw);
+// Test the raw value: normalize() percent-encodes the password, so the
+// placeholder arrives here as %5BYOUR-PASSWORD%5D and slips past a check on `url`.
+if (!url || raw?.includes("[YOUR-PASSWORD]")) {
   console.error("✖ Set a real DATABASE_URL in .env.local first (replace [YOUR-PASSWORD]).");
   process.exit(1);
 }

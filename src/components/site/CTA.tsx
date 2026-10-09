@@ -1,14 +1,15 @@
 import Link from "next/link";
 import { getSettings } from "@/lib/data";
+import { safeHref } from "@/lib/utils";
 import { Magnetic, Reveal, SplitText } from "./motion";
 
 export async function CTA() {
-  const { email } = await getSettings();
+  const { email, reply_time_promise, booking_url } = await getSettings();
   return (
     <section className="relative overflow-hidden bg-ember py-28 text-night sm:py-36">
       <div className="container-x relative">
         <Reveal>
-          <p className="eyebrow mb-8 text-night/60">Have a project in mind?</p>
+          <p className="eyebrow mb-8 text-night/80">Have a project in mind?</p>
         </Reveal>
         <div className="grid items-end gap-12 md:grid-cols-12">
           <SplitText
@@ -31,10 +32,19 @@ export async function CTA() {
           </div>
         </div>
         <Reveal delay={0.2} className="mt-16 flex flex-col gap-2 border-t border-night/20 pt-6 sm:flex-row sm:justify-between">
-          <a href={`mailto:${email}`} className="link-underline text-lg">
-            {email}
-          </a>
-          <span className="text-night/60">Typical reply time — under 24 hours</span>
+          <span className="flex flex-wrap items-center gap-x-6 gap-y-2">
+            <a href={`mailto:${email}`} className="link-underline text-lg">
+              {email}
+            </a>
+            {safeHref(booking_url) && (
+              <a href={safeHref(booking_url)} target="_blank" rel="noreferrer" className="link-underline text-lg">
+                Book a call ↗
+              </a>
+            )}
+          </span>
+          <span className="text-night/80">
+            {reply_time_promise || "Typical reply time: under 24 hours"}
+          </span>
         </Reveal>
       </div>
     </section>

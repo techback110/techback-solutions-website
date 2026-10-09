@@ -2,16 +2,22 @@ import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { Badge, Card, PageTitle } from "@/components/admin/shell";
 import { ButtonLink } from "@/components/admin/ui";
-import { getInquiries, getProjects, getReviews, getServices } from "@/lib/data";
+import { contentGaps } from "@/lib/content-health";
+import { getInquiries, getProjects, getReviews, getServices, getSettings, getTeam } from "@/lib/data";
 import { formatDate } from "@/lib/utils";
 
 export default async function DashboardPage() {
-  const [projects, services, reviews, inquiries] = await Promise.all([
+  const [projects, services, reviews, inquiries, settings, team] = await Promise.all([
     getProjects({ includeDrafts: true }),
     getServices({ includeDrafts: true }),
     getReviews({ includePending: true }),
     getInquiries(),
+    getSettings(),
+    getTeam({ includeDrafts: true }),
   ]);
+
+  const gaps = contentGaps({ settings, services, projects, reviews, team });
+  const blocking = gaps.filter((g) => g.severity === "blocking");
 
   const approved = reviews.filter((r) => r.approved);
   const avg = approved.length ? approved.reduce((s, r) => s + r.rating, 0) / approved.length : 0;
@@ -47,6 +53,41 @@ export default async function DashboardPage() {
           </Link>
         ))}
       </div>
+
+      {gaps.length > 0 && (
+        <Card className="mt-6">
+          <div className="flex items-center justify-between border-b border-line px-5 py-4">
+            <div>
+              <h2 className="font-medium">Before launch</h2>
+              <p className="mt-0.5 text-xs text-mute">
+                What is still missing, and what each one switches on.
+              </p>
+            </div>
+            <Badge tone={blocking.length ? "warn" : "neutral"}>{blocking.length} blocking</Badge>
+          </div>
+          <ul className="divide-y divide-line">
+            {gaps.map((g) => (
+              <li key={g.label} className="flex items-start gap-4 px-5 py-4">
+                <span
+                  className={`mt-1.5 size-2 shrink-0 rounded-full ${
+                    g.severity === "blocking" ? "bg-ember" : "bg-ink-3"
+                  }`}
+                />
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm">{g.label}</p>
+                  <p className="mt-1 text-xs text-mute">{g.unlocks}</p>
+                </div>
+                <Link
+                  href={g.href}
+                  className="shrink-0 text-xs text-mute transition-colors hover:text-bone"
+                >
+                  Fix →
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </Card>
+      )}
 
       <div className="mt-6 grid gap-6 lg:grid-cols-5">
         <Card className="lg:col-span-3">

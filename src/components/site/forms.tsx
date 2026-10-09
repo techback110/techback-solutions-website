@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { useActionState, useState } from "react";
 import { submitInquiry, submitReview } from "@/app/actions";
@@ -107,11 +108,33 @@ function Success({ message }: { message?: string }) {
       <div className="mb-6 grid size-14 place-items-center rounded-full bg-ember text-2xl text-night">✓</div>
       <p className="display text-5xl">Thank you.</p>
       <p className="mt-4 max-w-md text-lg text-bone/70">{message}</p>
+      {/* A confirmation used to be a dead end; give them somewhere to go. */}
+      <div className="mt-8 flex flex-wrap gap-3 border-t border-line pt-8">
+        <Link
+          href="/work"
+          className="rounded-full border border-line px-6 py-3 text-sm transition-colors hover:border-ember hover:bg-ember hover:text-night"
+        >
+          Explore the work
+        </Link>
+        <Link
+          href="/services"
+          className="rounded-full border border-line px-6 py-3 text-sm transition-colors hover:border-ember hover:bg-ember hover:text-night"
+        >
+          What we do
+        </Link>
+      </div>
     </motion.div>
   );
 }
 
-export function ContactForm({ services }: { services: string[] }) {
+export function ContactForm({
+  services,
+  attribution,
+}: {
+  services: string[];
+  /** Where the enquiry came from — case-study slug and any utm_* on the URL. */
+  attribution?: Record<string, string | undefined>;
+}) {
   const [state, action, pending] = useActionState<ActionState, FormData>(submitInquiry, {});
   const fe = state.fieldErrors ?? {};
 
@@ -122,14 +145,30 @@ export function ContactForm({ services }: { services: string[] }) {
       ) : (
         <motion.form key="form" action={action} exit={{ opacity: 0 }} className="relative space-y-10">
           <Honeypot />
+          {Object.entries(attribution ?? {}).map(([k, v]) =>
+            v ? <input key={k} type="hidden" name={k} value={v} /> : null
+          )}
           {services.length > 0 && <Chips name="service" label="I'm interested in" options={services} />}
           <div className="grid gap-8 sm:grid-cols-2">
             <Field name="name" label="Your name" required minLength={2} errors={fe.name} />
             <Field name="email" label="Email" type="email" required errors={fe.email} />
           </div>
-          <Field name="company" label="Company (optional)" errors={fe.company} />
-          <Chips name="budget" label="How would you like to work?" options={site.engagements} />
+          <div className="grid gap-8 sm:grid-cols-2">
+            <Field name="company" label="Company (optional)" errors={fe.company} />
+            <Field name="link" label="Your site or brief (optional)" errors={fe.link} />
+          </div>
+          <Chips name="engagement" label="How would you like to work?" options={site.engagements} />
+          <Chips name="budget" label="Rough budget" options={site.budgets} />
+          <Chips name="timeline" label="When do you want to start?" options={site.timelines} />
           <Field name="message" label="Tell us about your project" textarea required minLength={10} errors={fe.message} />
+          <label className="flex items-start gap-3 text-sm text-bone/70">
+            <input
+              type="checkbox"
+              name="nda"
+              className="mt-0.5 size-4 shrink-0 accent-[var(--color-ember)]"
+            />
+            This is confidential — please send an NDA before we talk.
+          </label>
           {state.error && <p className="text-ember">{state.error}</p>}
           <Submit pending={pending}>Send message</Submit>
         </motion.form>

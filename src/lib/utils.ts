@@ -38,3 +38,17 @@ export function pad(n: number) {
 export function isConfidential(project: { client: string; live_url: string | null }) {
   return !project.live_url && /^confidential/i.test(project.client.trim());
 }
+
+/**
+ * Only http(s) URLs may reach an href. Zod's `z.url()` accepts any scheme —
+ * including `javascript:` and `data:` — so a stored URL is not safe to render
+ * on validation alone. Returns undefined for anything else, which drops the link.
+ */
+export function safeHref(value: string | null | undefined) {
+  if (!value) return undefined;
+  try {
+    return /^https?:$/.test(new URL(value).protocol) ? value : undefined;
+  } catch {
+    return undefined;
+  }
+}

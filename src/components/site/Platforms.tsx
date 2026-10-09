@@ -8,13 +8,13 @@ const PLATFORMS = [
   {
     icon: Layers,
     title: "SaaS & multi-tenant platforms",
-    body: "Subscription products where every customer gets an isolated workspace, their own branding and their own data — on one codebase that scales from the first tenant to the thousandth.",
+    body: "Subscription products where every customer gets an isolated workspace, their own branding and their own data, on one codebase that scales from the first tenant to the thousandth.",
     proof: { slug: "arenaos", label: "See ArenaOS" },
   },
   {
     icon: CalendarCheck,
     title: "Booking portals",
-    body: "Seats, slots, site visits and shipments — live availability, online payments and instant confirmations your customers can use without calling you.",
+    body: "Seats, slots, site visits and shipments: live availability, online payments and instant confirmations your customers can use without calling you.",
     proof: { slug: "cargo-operations", label: "See a cargo booking portal" },
   },
   {
@@ -26,7 +26,7 @@ const PLATFORMS = [
   {
     icon: ListChecks,
     title: "Quiz & assessment platforms",
-    body: "Question banks, timed tests, live leaderboards and results analytics — on web and mobile, built to hold when everyone joins at once.",
+    body: "Question banks, timed tests, live leaderboards and results analytics, on web and mobile, built to hold when everyone joins at once.",
     proof: { slug: "quiz-platform", label: "See the quiz platform" },
   },
   {
@@ -38,7 +38,7 @@ const PLATFORMS = [
   {
     icon: Workflow,
     title: "Organising unorganised industries",
-    body: "We map how the work really happens — in cargo, real estate, gaming venues — and turn calls, registers and spreadsheets into software the whole team runs on.",
+    body: "We map how the work really happens in cargo, real estate and gaming venues, then turn calls, registers and spreadsheets into software the whole team runs on.",
     proof: { slug: "cargo-operations", label: "See how" },
   },
 ];
@@ -66,7 +66,7 @@ export function Platforms({ index, projectSlugs }: { index?: string; projectSlug
         title="Software that *scales* with you."
         aside={
           <p className="max-w-xs text-bone/60 md:ml-auto md:text-right">
-            From a single website to a SaaS serving hundreds of businesses — we design it, build it and run it in the cloud or on your own servers.
+            From a single website to a SaaS serving hundreds of businesses. We design it, build it and run it in the cloud or on your own servers.
           </p>
         }
       />

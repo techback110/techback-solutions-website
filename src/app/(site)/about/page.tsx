@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { JsonLd } from "@/components/JsonLd";
 import { CTA } from "@/components/site/CTA";
 import { Marquee } from "@/components/site/Marquee";
 import { Counter, Reveal } from "@/components/site/motion";
@@ -7,20 +8,33 @@ import { ScrollText } from "@/components/site/ScrollText";
 import { SectionHeading } from "@/components/site/SectionHeading";
 import { TeamPortrait } from "@/components/site/TeamPortrait";
 import { getSettings, getTeam } from "@/lib/data";
-import { site } from "@/lib/site";
 import { pad } from "@/lib/utils";
+import { breadcrumbLd, graph, personLd } from "@/lib/jsonLd";
+import { pageMeta } from "@/lib/seo";
 
 export const revalidate = 60;
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
+  path: "/about",
   title: "Studio",
-  description: `About ${site.name} — who we are and how we think.`,
-};
+  description:
+    "The studio behind the software: who we are, how we work, and the senior people who stay on your project after launch. Independent, based in Mumbai.",
+  images: ["/opengraph-image.png"],
+});
 
 export default async function AboutPage() {
   const [settings, team] = await Promise.all([getSettings(), getTeam()]);
 
   return (
     <>
+      <JsonLd
+        data={graph(
+          ...team.map(personLd),
+          breadcrumbLd([
+            { name: "Home", path: "/" },
+            { name: "Studio", path: "/about" },
+          ])
+        )}
+      />
       <PageHeader eyebrow="The studio" title="Small team. *Serious* craft." intro={settings.about_intro || undefined} />
 
       <section className="border-y border-line py-10">
@@ -75,6 +89,32 @@ export default async function AboutPage() {
                 <p className="mt-2 text-ink/60">{s.label}</p>
               </Reveal>
             ))}
+          </div>
+        </section>
+      )}
+
+      {settings.founder_letter && (
+        <section className="container-x py-28 sm:py-40">
+          <SectionHeading eyebrow="From the founder" title="Why we *work* this way." />
+          <div className="mt-20 grid gap-12 md:grid-cols-12">
+            <div className="space-y-6 md:col-span-7 md:col-start-2">
+              {settings.founder_letter.split(/\n{2,}/).map((para) => (
+                <Reveal key={para.slice(0, 40)}>
+                  <p className="text-lg leading-relaxed text-bone/75">{para}</p>
+                </Reveal>
+              ))}
+              {settings.founder_signature && (
+                <Reveal>
+                  <p className="eyebrow pt-4 text-mute">{settings.founder_signature}</p>
+                </Reveal>
+              )}
+            </div>
+            {settings.continuity_statement && (
+              <Reveal delay={0.15} className="md:col-span-3">
+                <p className="eyebrow mb-4 text-mute">If I am unavailable</p>
+                <p className="leading-relaxed text-bone/60">{settings.continuity_statement}</p>
+              </Reveal>
+            )}
           </div>
         </section>
       )}

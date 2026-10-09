@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { site } from "@/lib/site";
 import { cn, pad } from "@/lib/utils";
 import { ThemeToggle } from "../ThemeToggle";
+import { Logo } from "./Logo";
 import { EASE, Magnetic, RollText } from "./motion";
 import { getLenis } from "./SmoothScroll";
 
@@ -48,10 +49,7 @@ export function Navbar({ email, address }: { email: string; address: string }) {
           )}
         >
           <Link href="/" className="relative z-10 flex items-center gap-2.5 text-bone" aria-label={`${site.name} home`}>
-            <span className="grid size-8 place-items-center rounded-full bg-ember font-serif text-xl italic leading-none text-night">
-              t
-            </span>
-            <span className="text-[15px] font-medium tracking-tight">{site.shortName}</span>
+            <Logo />
             <span className="eyebrow hidden text-mute sm:inline">®</span>
           </Link>
 

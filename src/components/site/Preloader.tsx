@@ -3,6 +3,7 @@
 import { animate, AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { site } from "@/lib/site";
+import { LogoMark } from "./Logo";
 import { EASE } from "./motion";
 
 import { INTRO_DURATION, INTRO_KEY as KEY } from "@/lib/intro";
@@ -15,7 +16,26 @@ export function introDelay() {
 }
 
 /** First-visit intro: a counter and a curtain. Skipped on repeat visits. */
-export function Preloader() {
+/** Italicises *starred* words. Deliberately word-by-word so the convention is
+ *  identical to SplitText, which only emphasises a single starred word. */
+function SplitEmphasis({ text }: { text: string }) {
+  return (
+    <>
+      {text.split(" ").map((raw, i) => {
+        const italic = raw.startsWith("*") && raw.endsWith("*") && raw.length > 2;
+        const word = raw.replaceAll("*", "");
+        return (
+          <span key={i}>
+            {i > 0 && " "}
+            {italic ? <em>{word}</em> : word}
+          </span>
+        );
+      })}
+    </>
+  );
+}
+
+export function Preloader({ tagline }: { tagline?: string }) {
   const [show, setShow] = useState(true);
   const [count, setCount] = useState(0);
 
@@ -52,7 +72,10 @@ export function Preloader() {
           transition={{ duration: 1, ease: EASE }}
         >
           <div className="flex justify-between">
-            <span className="eyebrow">{site.name}</span>
+            <span className="flex items-center gap-2.5">
+              <LogoMark compact className="h-6 w-auto text-night" />
+              <span className="eyebrow">{site.name}</span>
+            </span>
             <span className="eyebrow">Loading experience</span>
           </div>
           <div className="flex items-end justify-between">
@@ -62,7 +85,13 @@ export function Preloader() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: EASE }}
             >
-              Design that <em>moves</em> people.
+              {tagline ? (
+                <SplitEmphasis text={tagline} />
+              ) : (
+                <>
+                  Design that <em>moves</em> people.
+                </>
+              )}
             </motion.p>
             <span className="display text-[22vw] leading-[0.75] tabular-nums sm:text-[14vw]">{count}</span>
           </div>

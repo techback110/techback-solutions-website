@@ -2,11 +2,15 @@ import { Lock } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { JsonLd } from "@/components/JsonLd";
+import { Breadcrumbs } from "@/components/site/Breadcrumbs";
 import { CTA } from "@/components/site/CTA";
 import { Reveal, SplitText } from "@/components/site/motion";
 import { ProjectVisual } from "@/components/site/ProjectVisual";
 import { getProjectBySlug, getProjects } from "@/lib/data";
-import { isConfidential } from "@/lib/utils";
+import { breadcrumbLd, creativeWorkLd, graph, videoLd } from "@/lib/jsonLd";
+import { pageMeta } from "@/lib/seo";
+import { isConfidential, safeHref } from "@/lib/utils";
 
 export const revalidate = 60;
 
@@ -17,8 +21,16 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps<"/work/[slug]">): Promise<Metadata> {
   const { slug } = await params;
   const project = await getProjectBySlug(slug);
-  if (!project) return { title: "Project not found" };
-  return { title: `${project.client} — ${project.title}`, description: project.summary };
+  if (!project) return { title: "Project not found", robots: { index: false, follow: false } };
+  return pageMeta({
+    path: `/work/${project.slug}`,
+    title: `${project.client} — ${project.title}`,
+    description: project.summary,
+    type: "article",
+    publishedTime: project.created_at,
+    images: [project.cover_image, project.gallery[0], "/opengraph-image.png"],
+    keywords: [...project.tags, project.category, project.industry].filter(Boolean) as string[],
+  });
 }
 
 export default async function CaseStudyPage({ params }: PageProps<"/work/[slug]">) {
@@ -29,14 +41,44 @@ export default async function CaseStudyPage({ params }: PageProps<"/work/[slug]"
   const idx = all.findIndex((p) => p.id === project.id);
   const next = all[(idx + 1) % all.length];
 
+  /* Every filled field is shown. An earlier version capped this at four, which
+     silently swallowed Duration and Team once a project had them all. */
+  const facts: [string, string][] = (
+    [
+      ["Client", project.client],
+      ["Industry", project.industry],
+      ["Discipline", project.category],
+      ["Our role", project.role],
+      ["Duration", project.duration_weeks],
+      ["Team", project.team_size],
+      ["Year", String(project.year)],
+      ["Scope", project.tags.join(", ")],
+    ] as [string, string | undefined][]
+  ).filter((entry): entry is [string, string] => Boolean(entry[1]));
+
   return (
     <>
+      <JsonLd
+        data={graph(
+          creativeWorkLd(project),
+          videoLd(project),
+          breadcrumbLd([
+            { name: "Home", path: "/" },
+            { name: "Work", path: "/work" },
+            { name: project.client, path: `/work/${project.slug}` },
+          ])
+        )}
+      />
       <header className="container-x pb-16 pt-40 sm:pt-52">
-        <Reveal>
-          <Link href="/work" className="eyebrow mb-10 inline-flex items-center gap-2 text-mute hover:text-bone">
-            ← All work
-          </Link>
-        </Reveal>
+        <div className="mb-10">
+          <Breadcrumbs
+            trail={[
+              { name: "Home", path: "/" },
+              { name: "Work", path: "/work" },
+              { name: project.client, path: `/work/${project.slug}` },
+            ]}
+          />
+        </div>
         <div className="grid gap-10 md:grid-cols-12 md:items-end">
           <div className="md:col-span-8">
             <Reveal>
@@ -53,12 +95,7 @@ export default async function CaseStudyPage({ params }: PageProps<"/work/[slug]"
 
         <Reveal delay={0.5}>
           <dl className="mt-16 grid grid-cols-2 gap-6 border-t border-line pt-6 sm:grid-cols-4">
-            {[
-              ["Client", project.client],
-              ["Discipline", project.category],
-              ["Year", String(project.year)],
-              ["Scope", project.tags.join(", ") || "—"],
-            ].map(([k, v]) => (
+            {facts.map(([k, v]) => (
               <div key={k}>
                 <dt className="eyebrow text-mute">{k}</dt>
                 <dd className="mt-2">{v}</dd>
@@ -72,10 +109,23 @@ export default async function CaseStudyPage({ params }: PageProps<"/work/[slug]"
         <ProjectVisual project={project} large className="aspect-[16/9] w-full rounded-[6px]" />
       </Reveal>
 
+      {project.brief && (
+        <section className="container-x grid gap-12 pt-28 md:grid-cols-12">
+          <Reveal className="md:col-span-4">
+            <p className="eyebrow text-mute">
+              <span className="text-ember">(01)</span> The brief
+            </p>
+          </Reveal>
+          <Reveal delay={0.1} className="md:col-span-8">
+            <p className="display text-[clamp(1.8rem,3vw,2.8rem)] leading-[1.12]">{project.brief}</p>
+          </Reveal>
+        </section>
+      )}
+
       <section className="container-x grid gap-12 py-28 md:grid-cols-12">
         <Reveal className="md:col-span-4">
           <p className="eyebrow text-mute">
-            <span className="text-ember">(01)</span> The story
+            <span className="text-ember">({project.brief ? "02" : "01"})</span> The story
           </p>
         </Reveal>
         <div className="space-y-6 md:col-span-8">
@@ -86,10 +136,10 @@ export default async function CaseStudyPage({ params }: PageProps<"/work/[slug]"
               </p>
             </Reveal>
           ))}
-          {project.live_url && (
+          {safeHref(project.live_url) && (
             <Reveal>
               <a
-                href={project.live_url}
+                href={safeHref(project.live_url)}
                 target="_blank"
                 rel="noreferrer"
                 className="mt-4 inline-flex rounded-full border border-line px-6 py-3 text-sm transition-colors hover:border-ember hover:bg-ember hover:text-night"
@@ -106,7 +156,7 @@ export default async function CaseStudyPage({ params }: PageProps<"/work/[slug]"
                   Built under NDA, so the client and live product stay private. Happy to walk you through it on a call.
                 </p>
                 <Link
-                  href="/contact"
+                  href={`/contact?ref=${project.slug}`}
                   className="shrink-0 rounded-full bg-ember px-6 py-3 text-sm font-medium text-night transition-colors hover:bg-ember-2"
                 >
                   Build something similar →
@@ -126,9 +176,58 @@ export default async function CaseStudyPage({ params }: PageProps<"/work/[slug]"
                   {m.value}
                 </p>
                 <p className="mt-3 text-bone/60">{m.label}</p>
+                {m.method && <p className="mt-2 text-sm leading-relaxed text-mute">{m.method}</p>}
               </Reveal>
             ))}
           </div>
+        </section>
+      )}
+
+      {(project.outcome_bullets?.length ?? 0) > 0 && (
+        <section className="container-x grid gap-12 pb-28 md:grid-cols-12">
+          <Reveal className="md:col-span-4">
+            <p className="eyebrow text-mute">What changed</p>
+          </Reveal>
+          <ul className="space-y-5 md:col-span-8">
+            {project.outcome_bullets!.map((line, i) => (
+              <Reveal key={line} delay={i * 0.06}>
+                <li className="flex gap-4 text-lg leading-relaxed text-bone/75">
+                  <span className="mt-2 size-1.5 shrink-0 rounded-full bg-ember" aria-hidden />
+                  {line}
+                </li>
+              </Reveal>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {project.pull_quote && (
+        <section className="container-x pb-28">
+          <Reveal className="mx-auto max-w-3xl text-center">
+            <p className="display text-[clamp(1.6rem,3.2vw,2.6rem)] leading-[1.2]">
+              <span style={{ color: project.accent }}>&ldquo;</span>
+              {project.pull_quote}
+              <span style={{ color: project.accent }}>&rdquo;</span>
+            </p>
+            {project.pull_quote_attribution && (
+              <p className="eyebrow mt-8 text-mute">{project.pull_quote_attribution}</p>
+            )}
+          </Reveal>
+        </section>
+      )}
+
+      {(project.tech_stack?.length ?? 0) > 0 && (
+        <section className="container-x pb-28">
+          <Reveal>
+            <p className="eyebrow mb-6 text-mute">Built with</p>
+            <ul className="flex flex-wrap gap-x-8 gap-y-3 border-t border-line pt-6">
+              {project.tech_stack!.map((tech) => (
+                <li key={tech} className="text-bone/70">
+                  {tech}
+                </li>
+              ))}
+            </ul>
+          </Reveal>
         </section>
       )}
 

@@ -3,8 +3,10 @@ import { normalizeDatabaseUrl } from "./db-url";
 
 const url = normalizeDatabaseUrl(process.env.DATABASE_URL);
 
-/** True when a real connection string (not the Supabase placeholder) is configured. */
-export const hasDatabase = Boolean(url && !url.includes("[YOUR-PASSWORD]"));
+/** True when a real connection string (not the Supabase placeholder) is configured.
+ *  Tested against the raw env value: normalizeDatabaseUrl percent-encodes the
+ *  password, so the placeholder arrives here as %5BYOUR-PASSWORD%5D. */
+export const hasDatabase = Boolean(url && !process.env.DATABASE_URL?.includes("[YOUR-PASSWORD]"));
 
 const MAX_CONNECTIONS = 5;
 

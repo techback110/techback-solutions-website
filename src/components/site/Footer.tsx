@@ -68,9 +68,10 @@ export async function Footer() {
 
       <div className="container-x relative flex flex-col gap-2 border-t border-line py-6 text-sm text-mute sm:flex-row sm:justify-between">
         <span>
-          © {new Date().getFullYear()} {site.name}. All rights reserved.
+          © {new Date().getFullYear()} {settings.legal_entity || site.name}. All rights reserved.
+          {settings.gstin && <span className="ml-3">GSTIN {settings.gstin}</span>}
         </span>
-        <span>Designed & engineered in-house.</span>
+        <span>{settings.hq ? `Designed & engineered in ${settings.hq}.` : "Designed & engineered in-house."}</span>
       </div>
     </footer>
   );

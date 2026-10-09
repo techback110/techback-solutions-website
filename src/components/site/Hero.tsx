@@ -6,9 +6,23 @@ import { site } from "@/lib/site";
 import { introDelay } from "./Preloader";
 import { EASE, SplitText } from "./motion";
 
+/* Fallbacks, not placeholders: an admin clearing a field gets this copy back
+   rather than an empty hero. The *stars* mark the words SplitText emphasises. */
 const WORDS = ["Identity", "Websites", "Products", "Commerce", "Operations"];
+const HEADLINE = "Digital craft for brands with a *point* of *view.*";
+const SUBLEDE =
+  "We're an independent studio of designers and engineers building brands, websites and products that people remember, and businesses measure.";
 
-export function Hero() {
+export function Hero({
+  headline,
+  sublede,
+  rotator,
+}: {
+  headline?: string;
+  sublede?: string;
+  rotator?: string[];
+}) {
+  const words = rotator?.length ? rotator : WORDS;
   const ref = useRef<HTMLElement>(null);
   // Only read on the client; animation targets are not part of the SSR markup.
   const [delay] = useState<number | null>(() => (typeof document === "undefined" ? null : introDelay()));
@@ -32,9 +46,12 @@ export function Hero() {
   }, [mx, my]);
 
   useEffect(() => {
-    const id = setInterval(() => setWord((w) => (w + 1) % WORDS.length), 2400);
+    const id = setInterval(() => setWord((w) => (w + 1) % words.length), 2400);
     return () => clearInterval(id);
-  }, []);
+  }, [words.length]);
+
+  // Clamped at render so a shorter rotator can never index out of bounds.
+  const current = words[word % words.length];
 
   const d = delay ?? 0;
 
@@ -92,7 +109,7 @@ export function Hero() {
             immediate={delay !== null}
             delay={d + 0.1}
             stagger={0.07}
-            text="Digital craft for brands with a *point* of *view.*"
+            text={headline || HEADLINE}
             className="display max-w-[14ch] text-[clamp(3.4rem,10.5vw,11.5rem)]"
           />
         </div>
@@ -103,24 +120,21 @@ export function Hero() {
           transition={{ duration: 1.2, ease: EASE, delay: d + 0.8 }}
           className="grid items-end gap-8 pb-10 md:grid-cols-12"
         >
-          <p className="max-w-md text-lg leading-relaxed text-bone/70 md:col-span-5">
-            We&apos;re an independent studio of designers and engineers building brands, websites and products that
-            people remember — and businesses measure.
-          </p>
+          <p className="max-w-md text-lg leading-relaxed text-bone/70 md:col-span-5">{sublede || SUBLEDE}</p>
 
           <div className="md:col-span-4">
             <p className="eyebrow mb-2 text-mute">What we make</p>
             <div className="relative h-[1.15em] overflow-hidden text-4xl font-medium tracking-tight">
               <AnimatePresence mode="popLayout" initial={false}>
                 <motion.span
-                  key={WORDS[word]}
+                  key={current}
                   initial={{ y: "100%" }}
                   animate={{ y: "0%" }}
                   exit={{ y: "-100%" }}
                   transition={{ duration: 0.7, ease: EASE }}
                   className="absolute left-0 top-0"
                 >
-                  {WORDS[word]}
+                  {current}
                   <span className="text-ember">.</span>
                 </motion.span>
               </AnimatePresence>

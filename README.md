@@ -12,7 +12,7 @@ A premium agency website with a full admin panel, built with **Next.js 16 (App R
 - Projects without a cover image get an art-directed generated poster from their accent colour
 - SEO: metadata, sitemap.xml, robots.txt; respects `prefers-reduced-motion`
 
-**Admin (`/admin`)**
+**Admin (`/ad~min`)**
 - Signed, httpOnly session cookie (JWT via `jose`), protected by `src/proxy.ts` and re-checked in every server action
 - Dashboard with stats, latest inquiries, reviews awaiting approval
 - Create / edit / delete **projects** (live cover preview), **services**, **reviews** (approve / feature)

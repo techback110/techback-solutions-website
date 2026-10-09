@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { JsonLd } from "@/components/JsonLd";
 import { CTA } from "@/components/site/CTA";
 import { Reveal } from "@/components/site/motion";
 import { PageHeader } from "@/components/site/PageHeader";
@@ -7,12 +8,17 @@ import { SectionHeading } from "@/components/site/SectionHeading";
 import { ServiceAccordion } from "@/components/site/ServiceAccordion";
 import { getServices } from "@/lib/data";
 import { pad } from "@/lib/utils";
+import { breadcrumbLd, graph, serviceListLd } from "@/lib/jsonLd";
+import { pageMeta } from "@/lib/seo";
 
 export const revalidate = 60;
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
+  path: "/services",
   title: "Services",
-  description: "Brand identity, websites, product design, e-commerce, operations panels, CRMs and growth.",
-};
+  description:
+    "Brand identity, websites, product design, e-commerce, operations panels, CRMs and growth. Design and engineering under one roof, out of Mumbai.",
+  images: ["/opengraph-image.png"],
+});
 
 const ENGAGEMENTS = [
   {
@@ -28,7 +34,7 @@ const ENGAGEMENTS = [
   },
   {
     name: "SaaS",
-    body: "We design, build and run your software product — from first version to paying customers.",
+    body: "We design, build and run your software product, from first version to paying customers.",
     points: ["Multi-tenant platform", "Subscriptions & user accounts", "Hosting & ongoing support"],
   },
   {
@@ -42,10 +48,19 @@ export default async function ServicesPage() {
   const services = await getServices();
   return (
     <>
+      <JsonLd
+        data={graph(
+          serviceListLd(services),
+          breadcrumbLd([
+            { name: "Home", path: "/" },
+            { name: "Services", path: "/services" },
+          ])
+        )}
+      />
       <PageHeader
         eyebrow="Capabilities"
         title="Six disciplines, *one* team."
-        intro="Strategy, design and engineering under one roof — so ideas survive the journey from workshop to production intact."
+        intro="Strategy, design and engineering under one roof, so ideas survive the journey from workshop to production intact."
       />
 
       <section className="mx-2 rounded-[2rem] bg-bone py-24 text-ink sm:mx-4 sm:rounded-[3rem] sm:py-32">

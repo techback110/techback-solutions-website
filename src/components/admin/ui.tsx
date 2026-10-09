@@ -6,7 +6,7 @@ import { useFormStatus } from "react-dom";
 import { cn } from "@/lib/utils";
 
 export const inputCls =
-  "w-full rounded-lg border border-line bg-ink px-3.5 py-2.5 text-sm text-bone outline-none transition-colors placeholder:text-mute/70 focus:border-ember focus-visible:outline-none";
+  "w-full rounded-lg border border-line bg-ink px-3.5 py-2.5 text-sm text-bone outline-none transition-colors placeholder:text-mute focus:border-ember focus-visible:outline-none";
 
 export function Field({
   label,

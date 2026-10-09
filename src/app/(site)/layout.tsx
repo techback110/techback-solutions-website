@@ -11,7 +11,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
   return (
     <div className="grain">
       <script dangerouslySetInnerHTML={{ __html: introScript }} />
-      <Preloader />
+      <Preloader tagline={settings.preloader_tagline || undefined} />
       <SmoothScroll />
       <Cursor />
       <Navbar email={settings.email} address={settings.address} />

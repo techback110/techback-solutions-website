@@ -1,6 +1,7 @@
 "use client";
 
-import { AnimatePresence, motion } from "motion/react";
+import { motion } from "motion/react";
+import Link from "next/link";
 import { useState } from "react";
 import type { Service } from "@/lib/types";
 import { cn, pad } from "@/lib/utils";
@@ -35,7 +36,7 @@ export function ServiceAccordion({ services, defaultOpen = 0 }: { services: Serv
                   active && "scale-y-0 group-hover:scale-y-0"
                 )}
               />
-              <span className="eyebrow relative col-span-2 text-ink/50 transition-colors group-hover:text-ember sm:col-span-1">
+              <span className="eyebrow relative col-span-2 text-ink/60 transition-colors group-hover:text-ember sm:col-span-1">
                 {pad(i + 1)}
               </span>
               <span
@@ -61,18 +62,28 @@ export function ServiceAccordion({ services, defaultOpen = 0 }: { services: Serv
               </span>
             </button>
 
-            <AnimatePresence initial={false}>
-              {active && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.7, ease: EASE }}
-                  className="overflow-hidden"
-                >
+            {/* Always mounted, collapsed by height. Unmounting it kept the
+                detail links out of the server HTML, so crawlers never saw them. */}
+            <motion.div
+              initial={false}
+              animate={{ height: active ? "auto" : 0, opacity: active ? 1 : 0 }}
+              transition={{ duration: 0.7, ease: EASE }}
+              className="overflow-hidden"
+              aria-hidden={!active}
+              inert={!active}
+            >
                   <div className="grid grid-cols-12 gap-4 pb-10">
                     <div className="col-span-12 sm:col-span-6 sm:col-start-2">
                       <p className="max-w-xl text-lg leading-relaxed text-ink/75">{s.description}</p>
+                      <Link
+                        href={`/services/${s.slug}`}
+                        className="group/link mt-8 inline-flex items-center gap-3 text-ink"
+                      >
+                        <span className="link-underline">{s.title} in detail</span>
+                        <span className="grid size-9 place-items-center rounded-full border border-line-ink transition-all duration-500 group-hover/link:rotate-45 group-hover/link:border-ember group-hover/link:bg-ember group-hover/link:text-night">
+                          ↗
+                        </span>
+                      </Link>
                     </div>
                     <ul className="col-span-12 flex flex-wrap content-start gap-2 sm:col-span-5">
                       {s.deliverables.map((d) => (
@@ -81,10 +92,8 @@ export function ServiceAccordion({ services, defaultOpen = 0 }: { services: Serv
                         </li>
                       ))}
                     </ul>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+              </div>
+            </motion.div>
           </motion.li>
         );
       })}

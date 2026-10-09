@@ -8,7 +8,7 @@ export const seedServices: Seed<Service>[] = [
     title: "Brand Identity",
     summary: "Strategy, naming and visual systems that make you unmistakable.",
     description:
-      "We start with positioning, not logos. Through workshops and research we find the one idea your brand can own — then build a flexible identity system around it: mark, type, colour, motion and voice, documented so your team can use it without us.",
+      "We start with positioning, not logos. Through workshops and research we find the one idea your brand can own, then build a flexible identity system around it: mark, type, colour, motion and voice, documented so your team can use it without us.",
     deliverables: ["Brand strategy", "Naming", "Logo & wordmark", "Visual system", "Guidelines", "Motion identity"],
     sort_order: 1,
     published: true,
@@ -48,7 +48,7 @@ export const seedServices: Seed<Service>[] = [
     title: "Operations Panels & CRM",
     summary: "Admin panels, dashboards and CRMs built around the way your team actually works.",
     description:
-      "Spreadsheets and off-the-shelf tools only go so far. We build custom operations panels and CRMs that manage your customers, leads, orders and teams in one place — with the roles, automations and reports your business runs on.",
+      "Spreadsheets and off-the-shelf tools only go so far. We build custom operations panels and CRMs that manage your customers, leads, orders and teams in one place, with the roles, automations and reports your business runs on.",
     deliverables: ["Operations & admin panels", "Custom CRM", "Roles & permissions", "Workflow automation", "Reports & dashboards", "Integrations & APIs"],
     sort_order: 5,
     published: true,
@@ -74,7 +74,7 @@ export const seedProjects: Seed<Project>[] = [
     year: 2026,
     summary: "Portfolio website for a Mumbai luxury interior design studio crafting homes, offices and stores since 2008.",
     description:
-      "Mahalaxmi Art designs luxury interiors — homes, offices, retail stores and showrooms — and every project is won on how the last one looks.\n\nWe built a portfolio that lets the work sell itself: projects organised by space — residential, commercial, retail, kitchens, wardrobes, vanities, doors and frames — each with its own gallery and project details.\n\nAround it sit the pages that turn browsing into a brief: a clients page with testimonials, downloadable brochures, a blog for design ideas, and a contact page that brings enquiries straight to the studio.",
+      "Mahalaxmi Art designs luxury interiors: homes, offices, retail stores and showrooms. Every project is won on how the last one looks.\n\nWe built a portfolio that lets the work sell itself: projects organised by space: residential, commercial, retail, kitchens, wardrobes, vanities, doors and frames, each with its own gallery and project details.\n\nAround it sit the pages that turn browsing into a brief: a clients page with testimonials, downloadable brochures, a blog for design ideas, and a contact page that brings enquiries straight to the studio.",
     cover_image: null,
     gallery: [],
     tags: ["Portfolio website", "Project galleries", "Brochures", "Blog"],
@@ -96,7 +96,7 @@ export const seedProjects: Seed<Project>[] = [
     year: 2026,
     summary: "A property website and custom back office for a developer of farmhouses, NA plots and second homes near Mumbai and Pune.",
     description:
-      "AARAN HOMES sells limited-inventory farmhouses, NA plots and second homes — a purchase buyers research for months before they ever visit a site.\n\nWe built a fast property website where buyers browse by category, explore every property with photos, video and investment details, download brochures, and book a site visit or start a WhatsApp chat in one tap.\n\nBehind it sits a custom admin: the team adds properties, uploads images and video, reorders categories, publishes blog guides and works every enquiry and brochure lead from one place. Launch pages, like the one for Lonavala, go live without waiting on a developer.",
+      "AARAN HOMES sells limited-inventory farmhouses, NA plots and second homes, a purchase buyers research for months before they ever visit a site.\n\nWe built a fast property website where buyers browse by category, explore every property with photos, video and investment details, download brochures, and book a site visit or start a WhatsApp chat in one tap.\n\nBehind it sits a custom admin: the team adds properties, uploads images and video, reorders categories, publishes blog guides and works every enquiry and brochure lead from one place. Launch pages, like the one for Lonavala, go live without waiting on a developer.",
     cover_image: null,
     gallery: [],
     tags: ["Property website", "Admin panel", "Lead capture", "Landing pages"],
@@ -117,9 +117,9 @@ export const seedProjects: Seed<Project>[] = [
     client: "ArenaOS",
     category: "SaaS Platform",
     year: 2026,
-    summary: "A multi-tenant SaaS that runs gaming parlours end to end — bookings, the live floor, devices, payments and analytics.",
+    summary: "A multi-tenant SaaS that runs gaming parlours end to end: bookings, the live floor, devices, payments and analytics.",
     description:
-      "Gaming parlours still run on paper registers and decade-old software, and lose revenue to manual bookings and sessions nobody tracks.\n\nArenaOS replaces all of it with one platform: a white-labelled booking portal with seat selection, time slots and online payments; an operations panel with a live seat map, session timers and check-in; and device management for hardware health, remote resets and maintenance.\n\nOwners see revenue, seat utilisation and customer retention at a glance, with UPI payments, GST invoicing and loyalty built in. A super-admin panel onboards and manages every venue on the platform — each one its own isolated tenant, on subscription plans from a single parlour to a chain.\n\nBuilt on Next.js, NestJS, PostgreSQL and Prisma.",
+      "Gaming parlours still run on paper registers and decade-old software, and lose revenue to manual bookings and sessions nobody tracks.\n\nArenaOS replaces all of it with one platform: a white-labelled booking portal with seat selection, time slots and online payments; an operations panel with a live seat map, session timers and check-in; and device management for hardware health, remote resets and maintenance.\n\nOwners see revenue, seat utilisation and customer retention at a glance, with UPI payments, GST invoicing and loyalty built in. A super-admin panel onboards and manages every venue on the platform, each one its own isolated tenant, on subscription plans from a single parlour to a chain.\n\nBuilt on Next.js, NestJS, PostgreSQL and Prisma.",
     cover_image: null,
     gallery: [],
     tags: ["Multi-tenant SaaS", "Booking portal", "Operations panel", "Analytics"],
@@ -142,7 +142,7 @@ export const seedProjects: Seed<Project>[] = [
     year: 2026,
     summary: "Corporate website for an RPSL-certified ship management company in Mumbai serving ship owners and seafarers.",
     description:
-      "Vertitide connects qualified seafarers with ship owners operating container ships, bulk carriers, tankers and offshore vessels — work where trust and compliance decide who gets hired.\n\nWe built a site that speaks to both audiences: ship owners find crew management, technical management and ship chandling, organised by vessel sector, while seafarers learn how the company recruits and where to send their CV.\n\nCredentials lead the way — RPSL certification and MLC 2006 compliance are front and centre, alongside a direct line to the Mumbai office.",
+      "Vertitide connects qualified seafarers with ship owners operating container ships, bulk carriers, tankers and offshore vessels. This is work where trust and compliance decide who gets hired.\n\nWe built a site that speaks to both audiences: ship owners find crew management, technical management and ship chandling, organised by vessel sector, while seafarers learn how the company recruits and where to send their CV.\n\nCredentials lead the way: RPSL certification and MLC 2006 compliance are front and centre, alongside a direct line to the Mumbai office.",
     cover_image: null,
     gallery: [],
     tags: ["Corporate website", "Maritime", "Recruitment"],
@@ -162,9 +162,9 @@ export const seedProjects: Seed<Project>[] = [
     client: "Confidential · EdTech",
     category: "SaaS Platform",
     year: 2026,
-    summary: "A quiz and assessment platform for students — practice, timed tests and live competitions on web and mobile.",
+    summary: "A quiz and assessment platform for students: practice, timed tests and live competitions on web and mobile.",
     description:
-      "An education company needed one platform to run quizzes for large numbers of students at once — daily practice, timed tests and live competitions.\n\nWe built the full stack: a question bank organised by subject, topic and difficulty; a test engine with timers, negative marking and instant scoring; live leaderboards; and results analytics that show students and teachers exactly where to improve.\n\nIt runs on web and mobile, holds up when a live quiz starts and everyone joins at once, and gives the team an admin panel to publish quizzes, manage users and track engagement.\n\nThe client is under NDA — but the same architecture can power your quiz app, assessment portal or learning product.",
+      "An education company needed one platform to run quizzes for large numbers of students at once: daily practice, timed tests and live competitions.\n\nWe built the full stack: a question bank organised by subject, topic and difficulty; a test engine with timers, negative marking and instant scoring; live leaderboards; and results analytics that show students and teachers exactly where to improve.\n\nIt runs on web and mobile, holds up when a live quiz starts and everyone joins at once, and gives the team an admin panel to publish quizzes, manage users and track engagement.\n\nThe client is under NDA, but the same architecture can power your quiz app, assessment portal or learning product.",
     cover_image: null,
     gallery: [],
     tags: ["Quiz engine", "Live leaderboards", "Web & mobile", "Admin panel"],
@@ -187,7 +187,7 @@ export const seedProjects: Seed<Project>[] = [
     year: 2026,
     summary: "A booking portal, operations panel and CRM that took a cargo business from calls and spreadsheets to one organised system.",
     description:
-      "Cargo still runs on phone calls, WhatsApp threads and spreadsheets — an industry where most of the operational knowledge lives in people's heads.\n\nWe built three connected pieces: a customer booking portal for quotes, bookings and shipment tracking; an operations panel for dispatch, status updates and documents; and a CRM that tracks every customer, lead and follow-up.\n\nSales, operations, accounts and management each see exactly what they need, and every shipment leaves a complete trail from first enquiry to delivery.\n\nIt's how we approach unorganised industries: map how the work really happens, then turn it into an organised process your whole team runs on.",
+      "Cargo still runs on phone calls, WhatsApp threads and spreadsheets. This is an industry where most of the operational knowledge lives in people's heads.\n\nWe built three connected pieces: a customer booking portal for quotes, bookings and shipment tracking; an operations panel for dispatch, status updates and documents; and a CRM that tracks every customer, lead and follow-up.\n\nSales, operations, accounts and management each see exactly what they need, and every shipment leaves a complete trail from first enquiry to delivery.\n\nIt's how we approach unorganised industries: map how the work really happens, then turn it into an organised process your whole team runs on.",
     cover_image: null,
     gallery: [],
     tags: ["Booking portal", "Operations panel", "CRM", "Role-based access"],
@@ -210,7 +210,7 @@ export const seedProjects: Seed<Project>[] = [
     year: 2026,
     summary: "An HR platform for employee records, attendance, leave and payroll, with a self-service portal for every employee.",
     description:
-      "Growing companies outgrow spreadsheets for HR fast: records scatter, leave approvals stall and payroll turns into a monthly scramble.\n\nThe platform brings it together — employee profiles and documents, attendance and shifts, leave policies with approval workflows, and payroll-ready reports.\n\nEmployees get a self-service portal for leave, payslips and requests; managers approve from anywhere; HR sees the whole organisation at a glance.\n\nIt runs on the client's own servers, so employee data never leaves their infrastructure — and we handle the deployment and updates there.",
+      "Growing companies outgrow spreadsheets for HR fast: records scatter, leave approvals stall and payroll turns into a monthly scramble.\n\nThe platform brings it together: employee profiles and documents, attendance and shifts, leave policies with approval workflows, and payroll-ready reports.\n\nEmployees get a self-service portal for leave, payslips and requests; managers approve from anywhere; HR sees the whole organisation at a glance.\n\nIt runs on the client's own servers, so employee data never leaves their infrastructure, and we handle the deployment and updates there.",
     cover_image: null,
     gallery: [],
     tags: ["HRMS", "Attendance & leave", "Payroll reports", "Self-hosted"],
@@ -233,7 +233,7 @@ export const seedProjects: Seed<Project>[] = [
     year: 2026,
     summary: "A workforce productivity system that assigns work, tracks output and shows managers who is doing what, live.",
     description:
-      "On factory floors, sites and field teams, productivity is usually measured at the end of the month — when it's too late to fix anything.\n\nSupervisors assign tasks and targets by shift, workers log their output from a phone, and attendance and hours tie directly to the work done.\n\nManagers get live dashboards for output by worker, team and site, spot bottlenecks early, and export reports for incentives and payroll.\n\nIt's designed for teams using software for the first time: simple screens, mobile first, and quick to roll out.",
+      "On factory floors, sites and field teams, productivity is usually measured at the end of the month, when it's too late to fix anything.\n\nSupervisors assign tasks and targets by shift, workers log their output from a phone, and attendance and hours tie directly to the work done.\n\nManagers get live dashboards for output by worker, team and site, spot bottlenecks early, and export reports for incentives and payroll.\n\nIt's designed for teams using software for the first time: simple screens, mobile first, and quick to roll out.",
     cover_image: null,
     gallery: [],
     tags: ["Task & target tracking", "Mobile-first", "Live dashboards", "Reports"],
@@ -255,9 +255,11 @@ export const seedReviews: Seed<Review>[] = [];
 
 export const seedTeam: Seed<TeamMember>[] = [
   { name: "Arman Noyada", role: "Founder, Engineering", photo_url: null, color: "#ff4d1c", sort_order: 1, published: true },
-  { name: "Isha Kapoor", role: "Design Director", photo_url: null, color: "#c08552", sort_order: 2, published: true },
-  { name: "Leo Fernandes", role: "Brand & Motion", photo_url: null, color: "#6e8b74", sort_order: 3, published: true },
-  { name: "Nina Das", role: "Product Strategy", photo_url: null, color: "#3f5e8c", sort_order: 4, published: true },
+  /* Placeholder names from the original template. Kept unpublished as slots to
+     replace with real collaborators; they must not appear on the public site. */
+  { name: "Isha Kapoor", role: "Design Director", photo_url: null, color: "#c08552", sort_order: 2, published: false },
+  { name: "Leo Fernandes", role: "Brand & Motion", photo_url: null, color: "#6e8b74", sort_order: 3, published: false },
+  { name: "Nina Das", role: "Product Strategy", photo_url: null, color: "#3f5e8c", sort_order: 4, published: false },
 ];
 
 export const seedSettings: SiteSettings = {
@@ -273,7 +275,7 @@ export const seedSettings: SiteSettings = {
     { label: "Behance", href: "https://behance.net" },
   ],
   home_intro:
-    "We're a small, senior team who believe the best digital work comes from sweating the details nobody asked about. No account managers, no hand-offs — just the people doing the work, talking directly to you.",
+    "We're a small, senior team who believe the best digital work comes from sweating the details nobody asked about. No account managers, no hand-offs. Just the people doing the work, talking directly to you.",
   clients: ["Mahalaxmi Art", "AARAN HOMES", "ArenaOS", "Vertitide Ship Management"],
   stats: [
     { value: 120, suffix: "+", label: "Projects shipped" },
@@ -291,4 +293,28 @@ export const seedSettings: SiteSettings = {
     { title: "Measure what matters", body: "Beautiful is the baseline. We agree on the numbers that define success before we start." },
     { title: "Small on purpose", body: "We take on a handful of projects at a time so each one gets our full attention." },
   ],
+
+  /* Facts and public commitments are intentionally blank. They render as hidden
+     until a real value is entered in Admin → Settings. Do not invent them. */
+  hq: "",
+  regions: [],
+  office_hours: "",
+
+  hero_headline: "We build the *software* that runs your *business.*",
+  hero_sublede:
+    "An independent studio in Mumbai designing and engineering the websites, SaaS platforms and operations software that keep a growing business running.",
+  hero_rotator: ["SaaS platforms", "Operations panels", "CRMs", "Websites"],
+  preloader_tagline: "Websites. Platforms. The panel your team opens every morning.",
+
+  booking_url: "",
+  whatsapp: "",
+  reply_time_promise: "",
+  reply_time_miss_policy: "",
+
+  legal_entity: "",
+  gstin: "",
+
+  founder_letter: "",
+  founder_signature: "",
+  continuity_statement: "",
 };

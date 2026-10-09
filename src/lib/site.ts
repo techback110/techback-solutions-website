@@ -14,6 +14,10 @@ export const site = {
     { label: "Reviews", href: "/reviews" },
   ],
   engagements: ["Project", "Partnership", "SaaS", "Consultancy"],
+  /* Asking for a band rather than a number: it qualifies the enquiry without
+     making someone commit to a figure before they have spoken to anyone. */
+  budgets: ["Under ₹1L", "₹1L – ₹3L", "₹3L – ₹8L", "₹8L – ₹20L", "₹20L+", "Not sure yet"],
+  timelines: ["As soon as possible", "1–3 months", "3–6 months", "6+ months", "Just exploring"],
 } as const;
 
 /**

@@ -20,6 +20,7 @@ import { useState } from "react";
 import { logout } from "@/app/admin/actions";
 import { site } from "@/lib/site";
 import { cn } from "@/lib/utils";
+import { LogoMark } from "../site/Logo";
 import { ThemeToggle } from "../ThemeToggle";
 
 const NAV = [
@@ -64,7 +65,7 @@ export function Sidebar({ email, unread, pending }: { email: string; unread: num
       >
         <div className="flex items-center justify-between px-5 py-5">
           <Link href="/admin" className="flex items-center gap-2.5">
-            <span className="grid size-8 place-items-center rounded-full bg-ember font-serif text-xl italic leading-none text-night">t</span>
+            <LogoMark compact className="h-7 w-auto text-ember" />
             <span>
               <span className="block text-sm font-semibold">{site.shortName}</span>
               <span className="block text-xs text-mute">Studio admin</span>

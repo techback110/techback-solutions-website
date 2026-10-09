@@ -32,11 +32,33 @@ export default async function InquiriesPage() {
                   <div className="hidden gap-1.5 sm:flex">
                     {i.service && <Badge>{i.service}</Badge>}
                     {i.budget && <Badge tone="accent">{i.budget}</Badge>}
+                    {i.nda && <Badge>NDA</Badge>}
                   </div>
                   <span className="shrink-0 text-xs text-mute">{formatDate(i.created_at)}</span>
                 </summary>
                 <div className="border-t border-line px-5 py-5 sm:pl-11">
                   <p className="whitespace-pre-wrap text-sm leading-relaxed text-bone/85">{i.message}</p>
+                  {(() => {
+                    const meta: [string, string][] = [
+                      ...(i.engagement ? ([["Engagement", i.engagement]] as [string, string][]) : []),
+                      ...(i.timeline ? ([["Timeline", i.timeline]] as [string, string][]) : []),
+                      ...(i.link ? ([["Link", i.link]] as [string, string][]) : []),
+                      ...(i.ref ? ([["Came from", `/work/${i.ref}`]] as [string, string][]) : []),
+                      ...(i.utm_source ? ([["Source", i.utm_source]] as [string, string][]) : []),
+                      ...(i.utm_campaign ? ([["Campaign", i.utm_campaign]] as [string, string][]) : []),
+                    ];
+                    if (meta.length === 0) return null;
+                    return (
+                      <dl className="mt-5 grid gap-x-8 gap-y-2 border-t border-line pt-4 text-xs sm:grid-cols-2">
+                        {meta.map(([k, v]) => (
+                          <div key={k} className="flex gap-2">
+                            <dt className="shrink-0 text-mute">{k}</dt>
+                            <dd className="truncate">{v}</dd>
+                          </div>
+                        ))}
+                      </dl>
+                    );
+                  })()}
                   <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
                     <a
                       href={`mailto:${i.email}?subject=${encodeURIComponent("Re: your project inquiry")}`}

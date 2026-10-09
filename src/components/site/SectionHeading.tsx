@@ -20,7 +20,7 @@ export function SectionHeading({
     <div className={cn("grid gap-8 md:grid-cols-12 md:items-end", className)}>
       <div className="md:col-span-8">
         <Reveal>
-          <p className={cn("eyebrow mb-6 flex items-center gap-3", dark ? "text-mute" : "text-ink/55")}>
+          <p className={cn("eyebrow mb-6 flex items-center gap-3", dark ? "text-mute" : "text-ink/60")}>
             {index && <span className="text-ember">({index})</span>}
             {eyebrow}
           </p>

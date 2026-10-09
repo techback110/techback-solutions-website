@@ -11,8 +11,28 @@ import { SectionHeading } from "@/components/site/SectionHeading";
 import { ServiceAccordion } from "@/components/site/ServiceAccordion";
 import { Testimonials } from "@/components/site/Testimonials";
 import { getProjects, getReviews, getServices, getSettings } from "@/lib/data";
+import { pageMeta } from "@/lib/seo";
 
 export const revalidate = 60;
+
+export async function generateMetadata() {
+  const settings = await getSettings();
+  return pageMeta({
+    path: "/",
+    description:
+      settings.description ||
+      "Independent design and engineering studio in Mumbai building websites, SaaS platforms, operations panels and CRMs.",
+    images: ["/opengraph-image.png"],
+    keywords: [
+      "design and engineering studio",
+      "SaaS development",
+      "CRM development",
+      "operations software",
+      "Next.js development agency",
+      "Mumbai",
+    ],
+  });
+}
 
 /* Asymmetric editorial grid: wide / narrow alternating rows. */
 const LAYOUT = [
@@ -36,7 +56,11 @@ export default async function HomePage() {
 
   return (
     <>
-      <Hero />
+      <Hero
+        headline={settings.hero_headline || undefined}
+        sublede={settings.hero_sublede || undefined}
+        rotator={settings.hero_rotator?.length ? settings.hero_rotator : undefined}
+      />
 
       {settings.clients.length > 0 && (
         <section className="border-y border-line py-10">

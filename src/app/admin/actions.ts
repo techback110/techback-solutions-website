@@ -73,6 +73,13 @@ function failure(err: unknown): ActionState {
 /* Services                                                           */
 /* ------------------------------------------------------------------ */
 
+/**
+ * `z.url()` alone accepts any scheme, including `javascript:` and `data:`.
+ * Every stored URL here can end up in an href or src, so the scheme is pinned
+ * at the boundary. `safeHref` guards the render side as well.
+ */
+const httpUrl = (message: string) => z.url({ protocol: /^https?$/, error: message });
+
 const serviceSchema = z.object({
   title: z.string().trim().min(2).max(120),
   slug: z.string().trim().regex(/^[a-z0-9-]+$/, "Lowercase letters, numbers and dashes only").max(80),
@@ -81,6 +88,14 @@ const serviceSchema = z.object({
   deliverables: z.array(z.string()).max(30),
   sort_order: z.coerce.number().int().min(0).max(9999),
   published: z.boolean(),
+
+  outcome: z.string().trim().max(300),
+  timeline_weeks: z.string().trim().max(40),
+  engagement_types: z.array(z.string().max(40)).max(6),
+  starting_from: z.string().trim().max(60),
+  in_scope: z.array(z.string().max(160)).max(20),
+  out_of_scope: z.array(z.string().max(160)).max(20),
+  sample_project_slugs: z.array(z.string().max(80)).max(6),
 });
 
 export async function saveService(_: ActionState, formData: FormData): Promise<ActionState> {
@@ -95,6 +110,14 @@ export async function saveService(_: ActionState, formData: FormData): Promise<A
     deliverables: lines(formData.get("deliverables")),
     sort_order: formData.get("sort_order") || 0,
     published: bool(formData.get("published")),
+
+    outcome: formData.get("outcome") ?? "",
+    timeline_weeks: formData.get("timeline_weeks") ?? "",
+    engagement_types: lines(formData.get("engagement_types")),
+    starting_from: formData.get("starting_from") ?? "",
+    in_scope: lines(formData.get("in_scope")),
+    out_of_scope: lines(formData.get("out_of_scope")),
+    sample_project_slugs: lines(formData.get("sample_project_slugs")),
   });
   if (!parsed.success) return invalid(parsed.error);
 
@@ -126,21 +149,43 @@ const projectSchema = z.object({
   year: z.coerce.number().int().min(1990).max(2100),
   summary: z.string().trim().min(10).max(400),
   description: z.string().trim().max(10000),
-  cover_image: z.url("Must be a full URL").nullable(),
-  gallery: z.array(z.url("Each gallery line must be a URL")).max(24),
+  cover_image: httpUrl("Must be a full http(s) URL").nullable(),
+  gallery: z.array(httpUrl("Each gallery line must be an http(s) URL")).max(24),
   tags: z.array(z.string().max(40)).max(12),
-  metrics: z.array(z.object({ value: z.string().max(24), label: z.string().max(80) })).max(6),
-  live_url: z.url("Must be a full URL").nullable(),
+  metrics: z
+    .array(
+      z.object({
+        value: z.string().max(24),
+        label: z.string().max(80),
+        method: z.string().max(120).optional(),
+      })
+    )
+    .max(6),
+  live_url: httpUrl("Must be a full http(s) URL").nullable(),
   accent: z.string().regex(/^#[0-9a-fA-F]{6}$/, "Use a hex colour like #C08552"),
   featured: z.boolean(),
   published: z.boolean(),
   sort_order: z.coerce.number().int().min(0).max(9999),
+
+  industry: z.string().trim().max(80),
+  duration_weeks: z.string().trim().max(40),
+  team_size: z.string().trim().max(40),
+  role: z.string().trim().max(160),
+  brief: z.string().trim().max(2000),
+  outcome_bullets: z.array(z.string().max(200)).max(8),
+  services_used: z.array(z.string().max(80)).max(8),
+  tech_stack: z.array(z.string().max(40)).max(20),
+  pull_quote: z.string().trim().max(400),
+  pull_quote_attribution: z.string().trim().max(120),
+  video_url: httpUrl("Must be a full http(s) URL").nullable(),
+  pdf_url: httpUrl("Must be a full http(s) URL").nullable(),
 });
 
+/** `value | label`, with an optional third segment for how it was measured. */
 function parseMetrics(v: FormDataEntryValue | null): Metric[] {
   return lines(v).map((line) => {
-    const [value, ...rest] = line.split("|");
-    return { value: value.trim(), label: rest.join("|").trim() };
+    const [value, label = "", method = ""] = line.split("|").map((s) => s.trim());
+    return method ? { value, label, method } : { value, label };
   });
 }
 
@@ -168,6 +213,22 @@ export async function saveProject(_: ActionState, formData: FormData): Promise<A
     featured: bool(formData.get("featured")),
     published: bool(formData.get("published")),
     sort_order: formData.get("sort_order") || 0,
+
+    industry: formData.get("industry") ?? "",
+    duration_weeks: formData.get("duration_weeks") ?? "",
+    team_size: formData.get("team_size") ?? "",
+    role: formData.get("role") ?? "",
+    brief: formData.get("brief") ?? "",
+    outcome_bullets: lines(formData.get("outcome_bullets")),
+    services_used: lines(formData.get("services_used")),
+    tech_stack: String(formData.get("tech_stack") ?? "")
+      .split(",")
+      .map((t) => t.trim())
+      .filter(Boolean),
+    pull_quote: formData.get("pull_quote") ?? "",
+    pull_quote_attribution: formData.get("pull_quote_attribution") ?? "",
+    video_url: optional(formData.get("video_url")),
+    pdf_url: optional(formData.get("pdf_url")),
   });
   if (!parsed.success) return invalid(parsed.error);
 
@@ -195,11 +256,17 @@ const reviewSchema = z.object({
   author: z.string().trim().min(2).max(120),
   role: z.string().trim().max(120),
   company: z.string().trim().max(160),
-  avatar_url: z.url("Must be a full URL").nullable(),
+  avatar_url: httpUrl("Must be a full http(s) URL").nullable(),
   rating: z.coerce.number().int().min(1).max(5),
   content: z.string().trim().min(10).max(1200),
   featured: z.boolean(),
   approved: z.boolean(),
+
+  project_slug: z.string().trim().max(80).nullable(),
+  quote_short: z.string().trim().max(240),
+  verification_source: z.enum(["email", "linkedin", "clutch", "gbp", "other"]).nullable(),
+  source_url: z.union([httpUrl("Must be a full http(s) URL"), z.null()]),
+  permission_granted: z.boolean(),
 });
 
 export async function saveReview(_: ActionState, formData: FormData): Promise<ActionState> {
@@ -214,6 +281,12 @@ export async function saveReview(_: ActionState, formData: FormData): Promise<Ac
     content: formData.get("content"),
     featured: bool(formData.get("featured")),
     approved: bool(formData.get("approved")),
+
+    project_slug: optional(formData.get("project_slug")),
+    quote_short: formData.get("quote_short") ?? "",
+    verification_source: optional(formData.get("verification_source")),
+    source_url: optional(formData.get("source_url")),
+    permission_granted: bool(formData.get("permission_granted")),
   });
   if (!parsed.success) return invalid(parsed.error);
 
@@ -262,10 +335,16 @@ export async function removeInquiry(formData: FormData) {
 const teamSchema = z.object({
   name: z.string().trim().min(2).max(120),
   role: z.string().trim().max(120),
-  photo_url: z.url("Must be a full URL").nullable(),
+  photo_url: httpUrl("Must be a full http(s) URL").nullable(),
   color: z.string().regex(/^#[0-9a-fA-F]{6}$/, "Use a hex colour like #C08552"),
   sort_order: z.coerce.number().int().min(0).max(9999),
   published: z.boolean(),
+
+  bio: z.string().trim().max(600),
+  specialty: z.string().trim().max(120),
+  location: z.string().trim().max(120),
+  linkedin_url: z.union([httpUrl("Must be a full http(s) URL"), z.null()]),
+  github_url: z.union([httpUrl("Must be a full http(s) URL"), z.null()]),
 });
 
 export async function saveTeamMember(_: ActionState, formData: FormData): Promise<ActionState> {
@@ -278,6 +357,12 @@ export async function saveTeamMember(_: ActionState, formData: FormData): Promis
     color: formData.get("color") || "#FF4D1C",
     sort_order: formData.get("sort_order") || 0,
     published: bool(formData.get("published")),
+
+    bio: formData.get("bio") ?? "",
+    specialty: formData.get("specialty") ?? "",
+    location: formData.get("location") ?? "",
+    linkedin_url: optional(formData.get("linkedin_url")),
+    github_url: optional(formData.get("github_url")),
   });
   if (!parsed.success) return invalid(parsed.error);
 
@@ -314,7 +399,7 @@ const settingsSchema = z.object({
   phone: z.string().trim().max(40),
   address: z.string().trim().max(200),
   description: z.string().trim().max(400),
-  socials: z.array(z.object({ label: z.string().min(1).max(40), href: z.url("Each link needs a full URL") })).max(12),
+  socials: z.array(z.object({ label: z.string().min(1).max(40), href: httpUrl("Each link needs a full http(s) URL") })).max(12),
   home_intro: z.string().trim().max(600),
   clients: z.array(z.string().max(60)).max(40),
   stats: z
@@ -323,6 +408,27 @@ const settingsSchema = z.object({
   about_intro: z.string().trim().max(600),
   about_story: z.string().trim().max(1200),
   principles: z.array(z.object({ title: z.string().min(1).max(80), body: z.string().max(400) })).max(8),
+
+  hq: z.string().trim().max(120),
+  regions: z.array(z.string().max(60)).max(20),
+  office_hours: z.string().trim().max(120),
+
+  hero_headline: z.string().trim().max(160),
+  hero_sublede: z.string().trim().max(400),
+  hero_rotator: z.array(z.string().max(40)).max(4, "Up to 4 — more reflows the headline"),
+  preloader_tagline: z.string().trim().max(160),
+
+  booking_url: z.union([httpUrl("Enter a full http(s) URL"), z.literal("")]),
+  whatsapp: z.string().trim().max(40),
+  reply_time_promise: z.string().trim().max(120),
+  reply_time_miss_policy: z.string().trim().max(200),
+
+  legal_entity: z.string().trim().max(160),
+  gstin: z.string().trim().max(30),
+
+  founder_letter: z.string().trim().max(2000),
+  founder_signature: z.string().trim().max(80),
+  continuity_statement: z.string().trim().max(600),
 });
 
 export async function saveSettings(_: ActionState, formData: FormData): Promise<ActionState> {
@@ -342,6 +448,27 @@ export async function saveSettings(_: ActionState, formData: FormData): Promise<
     about_intro: formData.get("about_intro") ?? "",
     about_story: formData.get("about_story") ?? "",
     principles: pairs(formData.get("principles")).map(([title, body]) => ({ title, body })),
+
+    hq: formData.get("hq") ?? "",
+    regions: lines(formData.get("regions")),
+    office_hours: formData.get("office_hours") ?? "",
+
+    hero_headline: formData.get("hero_headline") ?? "",
+    hero_sublede: formData.get("hero_sublede") ?? "",
+    hero_rotator: lines(formData.get("hero_rotator")),
+    preloader_tagline: formData.get("preloader_tagline") ?? "",
+
+    booking_url: String(formData.get("booking_url") ?? "").trim(),
+    whatsapp: formData.get("whatsapp") ?? "",
+    reply_time_promise: formData.get("reply_time_promise") ?? "",
+    reply_time_miss_policy: formData.get("reply_time_miss_policy") ?? "",
+
+    legal_entity: formData.get("legal_entity") ?? "",
+    gstin: formData.get("gstin") ?? "",
+
+    founder_letter: formData.get("founder_letter") ?? "",
+    founder_signature: formData.get("founder_signature") ?? "",
+    continuity_statement: formData.get("continuity_statement") ?? "",
   } satisfies Record<keyof SiteSettings, unknown>);
   if (!parsed.success) return invalid(parsed.error);
 

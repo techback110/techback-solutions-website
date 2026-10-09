@@ -1,15 +1,21 @@
 import type { Metadata } from "next";
+import { JsonLd } from "@/components/JsonLd";
 import { ReviewForm } from "@/components/site/forms";
 import { Reveal } from "@/components/site/motion";
 import { PageHeader } from "@/components/site/PageHeader";
 import { Avatar, Stars } from "@/components/site/Stars";
 import { getReviews } from "@/lib/data";
+import { breadcrumbLd, graph, reviewsLd } from "@/lib/jsonLd";
+import { pageMeta } from "@/lib/seo";
 
 export const revalidate = 60;
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
+  path: "/reviews",
   title: "Reviews",
-  description: "What our clients say about working with us.",
-};
+  description:
+    "What clients say about working with us, in their own words: the founders and teams whose websites, platforms and internal software we build and run.",
+  images: ["/opengraph-image.png"],
+});
 
 export default async function ReviewsPage() {
   const reviews = await getReviews();
@@ -17,6 +23,15 @@ export default async function ReviewsPage() {
 
   return (
     <>
+      <JsonLd
+        data={graph(
+          reviewsLd(reviews),
+          breadcrumbLd([
+            { name: "Home", path: "/" },
+            { name: "Reviews", path: "/reviews" },
+          ])
+        )}
+      />
       <PageHeader
         eyebrow="Client reviews"
         title="In their *own* words."
@@ -81,7 +96,7 @@ export default async function ReviewsPage() {
               Leave a <em className="text-ember">review.</em>
             </h2>
             <p className="mt-6 max-w-sm text-bone/60">
-              Your feedback helps future clients — and keeps us honest. Reviews are published after a quick check by our
+              Your feedback helps future clients, and keeps us honest. Reviews are published after a quick check by our
               team.
             </p>
           </Reveal>

@@ -13,7 +13,7 @@ const STEPS = [
   },
   {
     title: "Define",
-    body: "Strategy, positioning and a clear creative direction — agreed before a single pixel is polished, so there are no surprises later.",
+    body: "Strategy, positioning and a clear creative direction, agreed before a single pixel is polished, so there are no surprises later.",
     time: "1–2 weeks",
   },
   {
@@ -23,7 +23,7 @@ const STEPS = [
   },
   {
     title: "Deliver",
-    body: "Engineering, QA and a calm launch. Then we measure, learn and keep improving with you — most clients stay with us for years.",
+    body: "Engineering, QA and a calm launch. Then we measure, learn and keep improving with you. Most clients stay with us for years.",
     time: "Ongoing",
   },
 ];

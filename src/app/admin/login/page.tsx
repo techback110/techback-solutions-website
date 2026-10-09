@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { LogoMark } from "@/components/site/Logo";
 import { loginOptions } from "@/lib/auth";
 import { dataSource } from "@/lib/data";
 import { hasSessionSecret } from "@/lib/session";
@@ -22,7 +23,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/admin/logi
       />
       <div className="relative w-full max-w-sm">
         <Link href="/" className="mb-10 flex items-center justify-center gap-2.5">
-          <span className="grid size-9 place-items-center rounded-full bg-ember font-serif text-2xl italic leading-none text-night">t</span>
+          <LogoMark compact className="h-8 w-auto text-ember" />
           <span className="font-medium">{site.name}</span>
         </Link>
         <div className="rounded-2xl border border-line bg-ink-2/80 p-8 backdrop-blur">
